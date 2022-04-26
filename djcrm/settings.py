@@ -94,7 +94,7 @@ if DEVELOPMENT_MODE is True:
         }
     }
 elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-    if env("DATABASE_URL", None) is None:
+    if env("DATABASE_URL", default=None) is None:
         raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
         "default": env.db()
