@@ -526,6 +526,7 @@ def handle_uploaded_leads_file(request, f):
         last_name = row['last_name']
         source = row['source']
         email = row['email']
+        phone_number = row['phone_number']
 
         Lead.objects.create(
             organisation=request.user.userprofile,
@@ -533,6 +534,7 @@ def handle_uploaded_leads_file(request, f):
             last_name=last_name,
             source=source,
             email=email,
+            phone_number=phone_number,
         )
 
 
