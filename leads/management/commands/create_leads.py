@@ -19,13 +19,13 @@ class Command(BaseCommand):
             for row in csv_reader:
                 first_name = row['first_name']
                 last_name = row['last_name']
-                age = row['age']
+                source = row['source']
                 email = row['email']
 
                 Lead.objects.create(
                     organisation=organisation,
                     first_name=first_name,
                     last_name=last_name,
-                    age=age,
+                    source=source,
                     email=email,
                 )

@@ -13,7 +13,7 @@ class LeadModelForm(forms.ModelForm):
         fields = (
             'first_name',
             'last_name',
-            'age',
+            'source',
             'agent',
             'description',
             'phone_number',
@@ -39,7 +39,7 @@ class LeadModelForm(forms.ModelForm):
 class LeadForm(forms.Form):
     first_name = forms.CharField()
     last_name = forms.CharField()
-    age = forms.IntegerField(min_value=0)
+    source = forms.CharField()
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -82,3 +82,10 @@ class FollowUpModelForm(forms.ModelForm):
             'notes',
             'file'
         )
+
+class UploadLeadsForm(forms.Form):
+    # TODO: how to enable accept attribute?
+    # by default wont work
+    # so you can create a custom widget instead?
+    # leads_file = forms.FileField(accept="text/csv")
+    leads_file = forms.FileField()

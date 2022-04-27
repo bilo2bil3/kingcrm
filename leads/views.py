@@ -17,9 +17,11 @@ from .forms import (
     AssignAgentForm, 
     LeadCategoryUpdateForm,
     CategoryModelForm,
-    FollowUpModelForm
+    FollowUpModelForm,
+    UploadLeadsForm
 )
-
+from csv import DictReader
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -514,3 +516,32 @@ class LeadJsonView(generic.View):
         return JsonResponse({
             "qs": qs,
         })
+
+
+def handle_uploaded_leads_file(request, f):
+    f = io.StringIO(f.read().decode('utf-8'))
+    csv_reader = DictReader(f)
+    for row in csv_reader:
+        first_name = row['first_name']
+        last_name = row['last_name']
+        source = row['source']
+        email = row['email']
+
+        Lead.objects.create(
+            organisation=request.user.userprofile,
+            first_name=first_name,
+            last_name=last_name,
+            source=source,
+            email=email,
+        )
+
+
+def upload_leads(request):
+    if request.method == "POST":
+        form = UploadLeadsForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_leads_file(request, request.FILES['leads_file'])
+            return redirect(reverse('leads:lead-list'))
+    else:
+        form = UploadLeadsForm()
+    return render(request, 'leads/leads_upload.html', {'form': form})
