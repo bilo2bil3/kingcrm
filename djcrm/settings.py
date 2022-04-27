@@ -16,7 +16,7 @@ SECRET_KEY = env('SECRET_KEY')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="127.0.0.1,localhost", "djcrm-t8qok.ondigitalocean.app", "crm.w2m-trading.com").split(",")
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", default="127.0.0.1,localhost", "djcrm-t8qok.ondigitalocean.app").split(",")
 DEVELOPMENT_MODE = env("DEVELOPMENT_MODE", default=False)
 
 # Application definition
