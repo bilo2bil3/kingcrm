@@ -17,6 +17,8 @@ class LeadModelForm(forms.ModelForm):
             'agent',
             'description',
             'phone_number',
+            'country',
+            'campaign',
             'email',
             'profile_picture'
         )
@@ -83,9 +85,14 @@ class FollowUpModelForm(forms.ModelForm):
             'file'
         )
 
+
 class UploadLeadsForm(forms.Form):
     # TODO: how to enable accept attribute?
     # by default wont work
     # so you can create a custom widget instead?
     # leads_file = forms.FileField(accept="text/csv")
     leads_file = forms.FileField()
+
+class UploadLeadsWithAgentForm(forms.Form):
+    leads_file = forms.FileField()
+    agent = forms.ModelChoiceField(queryset=Agent.objects.all())

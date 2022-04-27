@@ -6,6 +6,7 @@ from .views import (
     CategoryCreateView, CategoryUpdateView, CategoryDeleteView, LeadJsonView, 
     FollowUpCreateView, FollowUpUpdateView, FollowUpDeleteView, upload_leads
 )
+from . import views
 
 app_name = "leads"
 
@@ -22,6 +23,8 @@ urlpatterns = [
     path('followups/<int:pk>/delete/', FollowUpDeleteView.as_view(), name='lead-followup-delete'),
     path('create/', LeadCreateView.as_view(), name='lead-create'),
     path('upload/', upload_leads, name='leads-upload'),
+    path('upload/random-agent/', views.upload_leads_with_random_agent, name='leads-upload-random'),
+    path('upload/select-agent/', views.upload_leads_with_selected_agent, name='leads-upload-selected'),
     path('categories/', CategoryListView.as_view(), name='category-list'),
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),
     path('categories/<int:pk>/update/', CategoryUpdateView.as_view(), name='category-update'),

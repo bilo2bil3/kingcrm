@@ -6,10 +6,10 @@
 <div class="max-w-lg mx-auto">
     <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
     <div class="py-5 border-t border-gray-200">
-        <h1 class="text-4xl text-gray-800">Upload a CSV file</h1>
+        <h1 class="text-4xl text-gray-800">Upload a CSV file | Random</h1>
         <div class="mt-3">
-            <a class="w-full rounded-md bg-blue-500 py-2 px-3" href="{% url 'leads:leads-upload-random' %}">
-                Assign random agent
+            <a class="w-full rounded-md bg-blue-500 py-2 px-3" href="{% url 'leads:leads-upload' %}">
+                Upload without assigning agent
             </a>
         </div>
         <div class="mt-4">

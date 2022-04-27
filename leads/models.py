@@ -34,6 +34,8 @@ class Lead(models.Model):
     email = models.EmailField()
     profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
     converted_date = models.DateTimeField(null=True, blank=True)
+    country = models.CharField(max_length=64, default='')
+    campaign = models.CharField(max_length=64, default='')
 
     objects = LeadManager()
 

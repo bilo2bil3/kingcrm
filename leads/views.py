@@ -18,7 +18,8 @@ from .forms import (
     LeadCategoryUpdateForm,
     CategoryModelForm,
     FollowUpModelForm,
-    UploadLeadsForm
+    UploadLeadsForm,
+    UploadLeadsWithAgentForm
 )
 from csv import DictReader
 import io
@@ -518,7 +519,50 @@ class LeadJsonView(generic.View):
         })
 
 
-def handle_uploaded_leads_file(request, f):
+### upload leads using csv file ###
+def partition_leads(leads, agents_count):
+    """split leads evenly between agents"""
+    # to do so
+    # we need to slice leads into N equal groups
+    # where N is number of agents
+    k, m = divmod(len(leads), agents_count)
+    return [leads[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(agents_count)]
+
+
+def add_leads_and_assign_random_agent(request, f):
+    f = io.StringIO(f.read().decode('utf-8'))
+    csv_reader = DictReader(f)
+    csv_rows = list(csv_reader)
+
+    agents = Agent.objects.all()
+    agents_count = Agent.objects.count()
+
+    parts = partition_leads(csv_rows, agents_count)
+    for i, agent in enumerate(agents):
+        leads_per_agent = parts[i]
+        for lead in leads_per_agent:
+            first_name = lead['first_name']
+            last_name = lead['last_name']
+            source = lead['source']
+            email = lead['email']
+            phone_number = lead['phone_number']
+            country = lead['country']
+            campaign = lead['campaign']
+
+            Lead.objects.create(
+                organisation=request.user.userprofile,
+                first_name=first_name,
+                last_name=last_name,
+                source=source,
+                email=email,
+                phone_number=phone_number,
+                country=country,
+                campaign=campaign,
+                agent=agent
+            )
+
+
+def add_leads_and_assign_selected_agent(request, f, agent):
     f = io.StringIO(f.read().decode('utf-8'))
     csv_reader = DictReader(f)
     for row in csv_reader:
@@ -527,6 +571,8 @@ def handle_uploaded_leads_file(request, f):
         source = row['source']
         email = row['email']
         phone_number = row['phone_number']
+        country = row['country']
+        campaign = row['campaign']
 
         Lead.objects.create(
             organisation=request.user.userprofile,
@@ -535,6 +581,33 @@ def handle_uploaded_leads_file(request, f):
             source=source,
             email=email,
             phone_number=phone_number,
+            country=country,
+            campaign=campaign,
+            agent=agent,
+        )
+
+
+def add_leads(request, f):
+    f = io.StringIO(f.read().decode('utf-8'))
+    csv_reader = DictReader(f)
+    for row in csv_reader:
+        first_name = row['first_name']
+        last_name = row['last_name']
+        source = row['source']
+        email = row['email']
+        phone_number = row['phone_number']
+        country = row['country']
+        campaign = row['campaign']
+
+        Lead.objects.create(
+            organisation=request.user.userprofile,
+            first_name=first_name,
+            last_name=last_name,
+            source=source,
+            email=email,
+            phone_number=phone_number,
+            country=country,
+            campaign=campaign
         )
 
 
@@ -542,8 +615,30 @@ def upload_leads(request):
     if request.method == "POST":
         form = UploadLeadsForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_leads_file(request, request.FILES['leads_file'])
+            add_leads(request, request.FILES['leads_file'])
             return redirect(reverse('leads:lead-list'))
     else:
         form = UploadLeadsForm()
     return render(request, 'leads/leads_upload.html', {'form': form})
+
+
+def upload_leads_with_random_agent(request):
+    if request.method == "POST":
+        form = UploadLeadsForm(request.POST, request.FILES)
+        if form.is_valid():
+            add_leads_and_assign_random_agent(request, request.FILES['leads_file'])
+            return redirect(reverse('leads:lead-list'))
+    else:
+        form = UploadLeadsForm()
+    return render(request, 'leads/leads_upload_random.html', {'form': form})
+
+
+def upload_leads_with_selected_agent(request):
+    if request.method == "POST":
+        form = UploadLeadsWithAgentForm(request.POST, request.FILES)
+        if form.is_valid():
+            add_leads_and_assign_selected_agent(request, request.FILES['leads_file'], form.cleaned_data['agent'])
+            return redirect(reverse('leads:lead-list'))
+    else:
+        form = UploadLeadsWithAgentForm()
+    return render(request, 'leads/leads_upload_selected.html', {'form': form})
