@@ -93,6 +93,45 @@ class UploadLeadsForm(forms.Form):
     # leads_file = forms.FileField(accept="text/csv")
     leads_file = forms.FileField()
 
+
 class UploadLeadsWithAgentForm(forms.Form):
     leads_file = forms.FileField()
     agent = forms.ModelChoiceField(queryset=Agent.objects.all())
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+### search leads ###
+class SearchLeadsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['source'] = forms.MultipleChoiceField(choices=self.get_choices('source'), required=False)
+        self.fields['country'] = forms.ChoiceField(choices=self.get_choices('country'), required=False)
+        self.fields['agent'] = forms.ChoiceField(choices=self.get_agents(), required=False)
+        self.fields['campaign'] = forms.ChoiceField(choices=self.get_choices('campaign'), required=False)
+        self.fields['category'] = forms.ChoiceField(choices=self.get_catgs(), required=False)
+
+    # text input
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+    email = forms.EmailField(required=False)
+    phone_number = forms.CharField(required=False)
+    start_date = forms.DateField(required=False, widget=DateInput())
+    end_date = forms.DateField(required=False, widget=DateInput())
+    # select input
+    # must be dynamic (ie. reflect db state)
+    # so should be included in __init__ method instead
+
+    def get_choices(self, field_name):
+        return [('', '------')] + [(v,v) for v in Lead.objects.values_list(field_name, flat=True).distinct()]
+
+    def get_agents(self):
+        return [
+            ('', '------')] + [(agent.pk, f'{agent.user.first_name} {agent.user.last_name}')
+            for agent in Agent.objects.all()
+        ]
+
+    def get_catgs(self):
+        return [('', '------')] + [(catg.pk, catg) for catg in Category.objects.all()]

@@ -3,6 +3,7 @@ import datetime
 from django import contrib
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -19,10 +20,12 @@ from .forms import (
     CategoryModelForm,
     FollowUpModelForm,
     UploadLeadsForm,
-    UploadLeadsWithAgentForm
+    UploadLeadsWithAgentForm,
+    SearchLeadsForm,
 )
 from csv import DictReader
 import io
+from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 
 logger = logging.getLogger(__name__)
 
@@ -105,10 +108,94 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             )
             # filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
-        return queryset
+        # print('###', self.request.GET)
+        # if self.request.GET.get('first_name'):
+        if '?' in self.request.get_full_path() and 'first_name' in self.request.get_full_path():
+            first_name = self.request.GET['first_name']
+            last_name = self.request.GET['last_name']
+            email = self.request.GET['email']
+            phone_number = self.request.GET['phone_number']
+            source = self.request.GET['source']
+            country = self.request.GET['country']
+            agent = self.request.GET['agent']
+            campaign = self.request.GET['campaign']
+            category = self.request.GET['category']
+            start_date = self.request.GET['start_date']
+            end_date = self.request.GET['end_date']
 
+            queryset = queryset.filter(
+                first_name__icontains=first_name,
+                last_name__icontains=last_name,
+                email__startswith=email,
+                phone_number__icontains=phone_number,
+                source__startswith=source,
+                country__startswith=country,
+                campaign__startswith=campaign,
+            )
+            if agent:
+                queryset = queryset.filter(agent__pk=agent)
+            if category:
+                queryset = queryset.filter(category__pk=category)
+            if start_date and end_date:
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+                queryset = queryset.filter(
+                    date_added__gte=start_date,
+                    date_added__lte=end_date
+                )
+            elif start_date:
+                queryset = queryset.filter(date_added=start_date)
+
+        # sorting
+        ordering = []
+        country_order = self.request.GET.get('country_order')
+        campaign_order = self.request.GET.get('campaign_order')
+        agent_order = self.request.GET.get('agent_order')
+        category_order = self.request.GET.get('category_order')
+        date_order = self.request.GET.get('date_order')
+        if country_order == 'desc':
+            ordering.append('-country')
+        elif country_order == 'asc':
+            ordering.append('country')
+        if campaign_order == 'desc':
+            ordering.append('-campaign')
+        elif campaign_order == 'asc':
+            ordering.append('campaign')
+        if agent_order == 'desc':
+            ordering.append('-agent')
+        elif agent_order == 'asc':
+            ordering.append('agent')
+        if category_order == 'desc':
+            ordering.append('-category')
+        elif category_order == 'asc':
+            ordering.append('category')
+        if date_order == 'desc':
+            ordering.append('-date_added')
+        elif date_order == 'asc':
+            ordering.append('date_added')
+        return queryset.order_by(*ordering)
+    
     def get_context_data(self, **kwargs):
         context = super(LeadListView, self).get_context_data(**kwargs)
+        # control sorting flags
+        url = self.request.get_full_path()
+        for field in ['country', 'campaign', 'agent', 'category', 'date']:
+            if f'{field}_order=asc' in url:
+                next_url = url.replace(f'{field}_order=asc', f'{field}_order=desc')
+                context.update({f'{field}_only_show_desc': True, f'{field}_next_url': next_url})
+            elif f'{field}_order=desc' in url:
+                next_url = url.replace(f'{field}_order=desc', f'{field}_order=asc')
+                context.update({f'{field}_only_show_asc': True, f'{field}_next_url': next_url})
+            else:
+                params1 = {f'{field}_order': 'asc'}
+                params2 = {f'{field}_order': 'desc'}
+                next_url_1 = add_query_string(url, params1)
+                next_url_2 = add_query_string(url, params2)
+                # print()
+                # print(next_url_1)
+                # print(next_url_2)
+                context.update({f'{field}_show_both': True, f'{field}_next_url_1': next_url_1, f'{field}_next_url_2': next_url_2})
+
         user = self.request.user
         if user.is_organisor:
             queryset = Lead.objects.filter(
@@ -642,3 +729,17 @@ def upload_leads_with_selected_agent(request):
     else:
         form = UploadLeadsWithAgentForm()
     return render(request, 'leads/leads_upload_selected.html', {'form': form})
+
+
+### search leads ###
+class LeadSearchView(generic.edit.FormView):
+    template_name = 'leads/lead_search.html'
+    form_class = SearchLeadsForm
+    # success_url = reverse_lazy('leads:lead-list')
+
+def add_query_string(url, params):
+    url_parts = list(urlparse(url))
+    query = dict(parse_qsl(url_parts[4], keep_blank_values=True))
+    query.update(params)
+    url_parts[4] = urlencode(query)
+    return urlunparse(url_parts)

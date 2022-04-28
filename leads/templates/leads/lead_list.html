@@ -17,6 +17,10 @@
                     Create a new lead
                 </a>
                 |
+                <a class="text-gray-500 hover:text-blue-500" href="{% url 'leads:lead-search' %}">
+                    Search leads
+                </a>
+                |
                 <a class="text-gray-500 hover:text-blue-500" href="{% url 'leads:leads-upload' %}">
                     Upload a CSV file
                 </a>
@@ -48,18 +52,58 @@
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Country
+                            {% if country_show_both %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ country_next_url_1 }}">&#9650;</a>
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ country_next_url_2 }}">&#9660;</a>
+                            {% elif country_only_show_asc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ country_next_url }}">&#9650;</a>
+                            {% elif country_only_show_desc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ country_next_url }}">&#9660;</a>
+                            {% endif %}
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Campaign
+                            {% if campaign_show_both %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ campaign_next_url_1 }}">&#9650;</a>
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ campaign_next_url_2 }}">&#9660;</a>
+                            {% elif campaign_only_show_asc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ campaign_next_url }}">&#9650;</a>
+                            {% elif campaign_only_show_desc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ campaign_next_url }}">&#9660;</a>
+                            {% endif %}
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Agent
+                            {% if agent_show_both %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ agent_next_url_1 }}">&#9650;</a>
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ agent_next_url_2 }}">&#9660;</a>
+                            {% elif agent_only_show_asc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ agent_next_url }}">&#9650;</a>
+                            {% elif agent_only_show_desc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ agent_next_url }}">&#9660;</a>
+                            {% endif %}
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Category
+                            {% if category_show_both %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ category_next_url_1 }}">&#9650;</a>
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ category_next_url_2 }}">&#9660;</a>
+                            {% elif category_only_show_asc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ category_next_url }}">&#9650;</a>
+                            {% elif category_only_show_desc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ category_next_url }}">&#9660;</a>
+                            {% endif %}
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Date
+                            {% if date_show_both %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ date_next_url_1 }}">&#9650;</a>
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ date_next_url_2 }}">&#9660;</a>
+                            {% elif date_only_show_asc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ date_next_url }}">&#9650;</a>
+                            {% elif date_only_show_desc %}
+                                <a class="text-gray-500 hover:text-blue-500" href="{{ date_next_url }}">&#9660;</a>
+                            {% endif %}
                             </th>
                             <th scope="col" class="relative px-6 py-3">
                             <span class="sr-only">Edit</span>
@@ -91,7 +135,7 @@
                                     {{ lead.campaign }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ lead.agent }}
+                                    {{ lead.agent.user.first_name }} {{ lead.agent.user.last_name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     {% if lead.category %}

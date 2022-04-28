@@ -193,4 +193,4 @@ LOGGING = {
     },
 }
 
-TAILWIND_APP_NAME = 'theme'
+# TAILWIND_APP_NAME = 'theme'
