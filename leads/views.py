@@ -147,54 +147,41 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(date_added=start_date)
 
         # sorting
-        ordering = []
-        country_order = self.request.GET.get('country_order')
-        campaign_order = self.request.GET.get('campaign_order')
-        agent_order = self.request.GET.get('agent_order')
-        category_order = self.request.GET.get('category_order')
-        date_order = self.request.GET.get('date_order')
-        if country_order == 'desc':
-            ordering.append('-country')
-        elif country_order == 'asc':
-            ordering.append('country')
-        if campaign_order == 'desc':
-            ordering.append('-campaign')
-        elif campaign_order == 'asc':
-            ordering.append('campaign')
-        if agent_order == 'desc':
-            ordering.append('-agent')
-        elif agent_order == 'asc':
-            ordering.append('agent')
-        if category_order == 'desc':
-            ordering.append('-category')
-        elif category_order == 'asc':
-            ordering.append('category')
-        if date_order == 'desc':
-            ordering.append('-date_added')
-        elif date_order == 'asc':
-            ordering.append('date_added')
-        return queryset.order_by(*ordering)
+        ordering = self.request.GET.get('order_by', None)
+        if ordering is None:
+            return queryset
+        if ordering == 'country_desc':
+            ordering = '-country'
+        elif ordering == 'country_asc':
+            ordering = 'country'
+        elif ordering == 'campaign_desc':
+            ordering = '-campaign'
+        elif ordering == 'campaign_asc':
+            ordering = 'campaign'
+        elif ordering == 'agent_desc':
+            ordering = '-agent__user__first_name'
+        elif ordering == 'agent_asc':
+            ordering = 'agent__user__first_name'
+        elif ordering == 'category_desc':
+            ordering = '-category__name'
+        elif ordering == 'category_asc':
+            ordering = 'category__name'
+        elif ordering == 'date_desc':
+            ordering = '-date_added'
+        elif ordering == 'date_asc':
+            ordering = 'date_added'
+        return queryset.order_by(ordering)
     
     def get_context_data(self, **kwargs):
         context = super(LeadListView, self).get_context_data(**kwargs)
         # control sorting flags
         url = self.request.get_full_path()
         for field in ['country', 'campaign', 'agent', 'category', 'date']:
-            if f'{field}_order=asc' in url:
-                next_url = url.replace(f'{field}_order=asc', f'{field}_order=desc')
-                context.update({f'{field}_only_show_desc': True, f'{field}_next_url': next_url})
-            elif f'{field}_order=desc' in url:
-                next_url = url.replace(f'{field}_order=desc', f'{field}_order=asc')
-                context.update({f'{field}_only_show_asc': True, f'{field}_next_url': next_url})
-            else:
-                params1 = {f'{field}_order': 'asc'}
-                params2 = {f'{field}_order': 'desc'}
-                next_url_1 = add_query_string(url, params1)
-                next_url_2 = add_query_string(url, params2)
-                # print()
-                # print(next_url_1)
-                # print(next_url_2)
-                context.update({f'{field}_show_both': True, f'{field}_next_url_1': next_url_1, f'{field}_next_url_2': next_url_2})
+            params1 = {f'order_by': f'{field}_asc'}
+            params2 = {f'order_by': f'{field}_desc'}
+            url_asc = add_query_string(url, params1)
+            url_desc = add_query_string(url, params2)
+            context.update({f'{field}_url_asc': url_asc, f'{field}_url_desc': url_desc})
 
         user = self.request.user
         if user.is_organisor:
