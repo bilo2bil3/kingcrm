@@ -25,7 +25,13 @@ from .forms import (
 )
 from csv import DictReader
 import io
-from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
+from urllib.parse import (
+    urlparse,
+    urlencode,
+    urlunparse,
+    parse_qsl,
+    parse_qs
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,27 +121,53 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             last_name = self.request.GET['last_name']
             email = self.request.GET['email']
             phone_number = self.request.GET['phone_number']
-            source = self.request.GET['source']
-            country = self.request.GET['country']
-            agent = self.request.GET['agent']
-            campaign = self.request.GET['campaign']
-            category = self.request.GET['category']
-            start_date = self.request.GET['start_date']
-            end_date = self.request.GET['end_date']
+            first_name_q = Q(first_name__icontains=first_name)
+            last_name_q = Q(last_name__icontains=last_name)
+            email_q = Q(email__startswith=email)
+            phone_number_q = Q(phone_number__icontains=phone_number)
+
+            sources = self.request.GET.getlist('source')
+            countries = self.request.GET.getlist('country')
+            campaigns = self.request.GET.getlist('campaign')
+            agents = self.request.GET.getlist('agent')
+            categories = self.request.GET.getlist('category')
+            # charfields fileters
+            # either membership filter (to include selected only)
+            # or starts with empty str filter (to include all)
+            if not sources:
+                sources_q = Q(source__startswith='')
+            else:
+                sources_q = Q(source__in=sources)
+            if not countries:
+                countries_q = Q(country__startswith='')
+            else:
+                countries_q = Q(country__in=countries)
+            if not campaigns:
+                campaigns_q = Q(campaign__startswith='')
+            else:
+                campaigns_q = Q(campaign__in=campaigns)
 
             queryset = queryset.filter(
-                first_name__icontains=first_name,
-                last_name__icontains=last_name,
-                email__startswith=email,
-                phone_number__icontains=phone_number,
-                source__startswith=source,
-                country__startswith=country,
-                campaign__startswith=campaign,
+                first_name_q
+                & last_name_q
+                & email_q
+                & phone_number_q
+                & sources_q
+                & countries_q
+                & campaigns_q
             )
-            if agent:
-                queryset = queryset.filter(agent__pk=agent)
-            if category:
-                queryset = queryset.filter(category__pk=category)
+            # fks filters
+            # only membership filter
+            if agents:
+                queryset = queryset.filter(agent__pk__in=agents)
+            if categories:
+                queryset = queryset.filter(category__pk__in=categories)
+
+            # datetime filters
+            # either in specific range
+            # or from specific date till today
+            start_date = self.request.GET['start_date']
+            end_date = self.request.GET['end_date']
             if start_date and end_date:
                 start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
                 end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
@@ -144,7 +176,8 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                     date_added__lte=end_date
                 )
             elif start_date:
-                queryset = queryset.filter(date_added=start_date)
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                queryset = queryset.filter(date_added__date=start_date)
 
         # sorting
         ordering = self.request.GET.get('order_by', None)
@@ -726,7 +759,14 @@ class LeadSearchView(generic.edit.FormView):
 
 def add_query_string(url, params):
     url_parts = list(urlparse(url))
-    query = dict(parse_qsl(url_parts[4], keep_blank_values=True))
+    query = dict(parse_qs(url_parts[4], keep_blank_values=True))
     query.update(params)
-    url_parts[4] = urlencode(query)
+    qs_parts = []
+    for k, v in query.items():
+        if isinstance(v, str):
+            qs_parts.append((k, v))
+        elif isinstance(v, list):
+            for f in v:
+                qs_parts.append((k, f))
+    url_parts[4] = urlencode(qs_parts)
     return urlunparse(url_parts)

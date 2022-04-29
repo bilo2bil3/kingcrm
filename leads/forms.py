@@ -107,11 +107,11 @@ class DateInput(forms.DateInput):
 class SearchLeadsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['source'] = forms.MultipleChoiceField(choices=self.get_choices('source'), required=False)
-        self.fields['country'] = forms.ChoiceField(choices=self.get_choices('country'), required=False)
-        self.fields['agent'] = forms.ChoiceField(choices=self.get_agents(), required=False)
-        self.fields['campaign'] = forms.ChoiceField(choices=self.get_choices('campaign'), required=False)
-        self.fields['category'] = forms.ChoiceField(choices=self.get_catgs(), required=False)
+        self.fields['source'] = forms.MultipleChoiceField(choices=self.get_choices('source'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['country'] = forms.MultipleChoiceField(choices=self.get_choices('country'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['agent'] = forms.MultipleChoiceField(choices=self.get_agents(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['campaign'] = forms.MultipleChoiceField(choices=self.get_choices('campaign'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['category'] = forms.MultipleChoiceField(choices=self.get_catgs(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
 
     # text input
     first_name = forms.CharField(required=False)
