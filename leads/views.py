@@ -101,6 +101,7 @@ def landing_page(request):
 class LeadListView(LoginRequiredMixin, generic.ListView):
     template_name = "leads/lead_list.html"
     context_object_name = "leads"
+    paginate_by = 7
 
     def get_queryset(self):
         user = self.request.user
@@ -206,6 +207,9 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             ordering = '-date_added'
         elif ordering == 'date_asc':
             ordering = 'date_added'
+        # add default ordering
+        else:
+            ordering = '-date_added'
         return queryset.order_by(ordering)
     
     def get_context_data(self, **kwargs):
@@ -218,6 +222,21 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             url_asc = add_query_string(url, params1)
             url_desc = add_query_string(url, params2)
             context.update({f'{field}_url_asc': url_asc, f'{field}_url_desc': url_desc})
+
+        # add pagination links
+        page_obj = context['page_obj']
+        if page_obj.has_previous():
+            first_page = add_query_string(url, {'page': 1})
+            previous_page = add_query_string(url, {'page': page_obj.previous_page_number()})
+            context.update({'first_page_url': first_page, 'previous_page_url': previous_page})
+        if page_obj.has_next():
+            next_page = add_query_string(url, {'page': page_obj.next_page_number()})
+            last_page = add_query_string(url, {'page': page_obj.paginator.num_pages})
+            context.update({'next_page_url': next_page, 'last_page_url': last_page})
+        ten_pages = []
+        for i in range(max(1, page_obj.number - 5), min(page_obj.number + 5, page_obj.paginator.num_pages) + 1):
+            ten_pages.append({i: add_query_string(url, {'page': i})})
+        context.update({'ten_pages': ten_pages})
 
         # to assign leads from lead_list view
         # we need show all agents
@@ -769,7 +788,7 @@ def add_query_string(url, params):
     query.update(params)
     qs_parts = []
     for k, v in query.items():
-        if isinstance(v, str):
+        if isinstance(v, (str, int)):
             qs_parts.append((k, v))
         elif isinstance(v, list):
             for f in v:
