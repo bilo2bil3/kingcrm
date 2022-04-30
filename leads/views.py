@@ -7,7 +7,8 @@ from django.db.models import Q
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
 from agents.mixins import OrganisorAndLoginRequiredMixin
 from .models import Lead, Agent, Category, FollowUp
@@ -32,6 +33,7 @@ from urllib.parse import (
     parse_qsl,
     parse_qs
 )
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +78,7 @@ class DashboardView(OrganisorAndLoginRequiredMixin, generic.TemplateView):
         ).count()
 
         # How many converted leads in the last 30 days
+        # TODO: fix this
         converted_category = Category.objects.get(name="Converted")
         converted_in_past30 = Lead.objects.filter(
             organisation=user.userprofile,
@@ -105,12 +108,12 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         if user.is_organisor:
             queryset = Lead.objects.filter(
                 organisation=user.userprofile, 
-                agent__isnull=False
+                # agent__isnull=False
             )
         else:
             queryset = Lead.objects.filter(
                 organisation=user.agent.organisation, 
-                agent__isnull=False
+                # agent__isnull=False
             )
             # filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
@@ -216,15 +219,18 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             url_desc = add_query_string(url, params2)
             context.update({f'{field}_url_asc': url_asc, f'{field}_url_desc': url_desc})
 
-        user = self.request.user
-        if user.is_organisor:
-            queryset = Lead.objects.filter(
-                organisation=user.userprofile, 
-                agent__isnull=True
-            )
-            context.update({
-                "unassigned_leads": queryset
-            })
+        # to assign leads from lead_list view
+        # we need show all agents
+        context.update({'agents': Agent.objects.all()})
+        # user = self.request.user
+        # if user.is_organisor:
+        #     queryset = Lead.objects.filter(
+        #         organisation=user.userprofile,
+        #         agent__isnull=True
+        #     )
+        #     context.update({
+        #         "unassigned_leads": queryset
+        #     })
         return context
 
 
@@ -770,3 +776,28 @@ def add_query_string(url, params):
                 qs_parts.append((k, f))
     url_parts[4] = urlencode(qs_parts)
     return urlunparse(url_parts)
+
+@login_required
+def delete_selected_leads(request):
+    if request.method == 'POST':
+        # print('####handling delete selected leads')
+        payload = json.loads(request.body)
+        url = payload['url']
+        # print('###current url', url)
+        leads_to_delete = list(map(int, payload['leads']))
+        # print('###', leads_to_delete)
+        qs = Lead.objects.filter(pk__in=leads_to_delete)
+        # print('###', qs)
+        qs.delete()
+        return HttpResponseRedirect(url)
+
+@login_required
+def assign_selected_leads(request):
+    if request.method == 'POST':
+        payload = json.loads(request.body)
+        url = payload['url']
+        agent_id = payload['agent']
+        leads_to_assign = list(map(int, payload['leads']))
+        qs = Lead.objects.filter(pk__in=leads_to_assign)
+        qs.update(agent=agent_id)
+        return HttpResponseRedirect(url)

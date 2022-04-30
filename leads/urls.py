@@ -30,6 +30,10 @@ urlpatterns = [
 
     path('search/', views.LeadSearchView.as_view(), name='lead-search'),
 
+    # AJAX URLs
+    path('delete-selected-leads', views.delete_selected_leads, name='delete-selected-leads'),
+    path('assign-selected-leads', views.assign_selected_leads, name='assign-selected-leads'),
+
     path('categories/', CategoryListView.as_view(), name='category-list'),
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),
     path('categories/<int:pk>/update/', CategoryUpdateView.as_view(), name='category-update'),
