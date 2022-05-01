@@ -35,6 +35,7 @@ from urllib.parse import (
 )
 import json
 import csv
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -847,3 +848,42 @@ def assign_selected_leads(request):
         qs = Lead.objects.filter(pk__in=leads_to_assign)
         qs.update(agent=agent_id)
         return HttpResponseRedirect(url)
+
+
+@login_required
+def click_to_call(request):
+    if request.method == 'POST':
+        print('###click2call: calling')
+        CALL_ENDPOINT = 'https://w2mtrading.coperato.net/gaya/api_ns/Click2Call/byAgent'
+        HANGUP_ENDPOINT = ''
+        AGENT_NUMBER = '997'
+        payload = json.loads(request.body)
+        lead_id = payload['lead']
+        # client_number = payload['phone_num']
+        # client_number = '+201023459934'
+        client_number = Lead.objects.get(pk=lead_id).phone_number
+        print('###', client_number)
+        r = requests.post(
+            CALL_ENDPOINT,
+            data={
+                'agent': AGENT_NUMBER,
+                'phone_num': client_number
+            }
+        )
+        # print('###call response', r.request.body)
+        # print('###call response', r.json())
+        return HttpResponse('')
+
+@login_required
+def hangup_call(request):
+    if request.method == 'POST':
+        print('###click2call: disconneting')
+        HANGUP_ENDPOINT = 'https://w2mtrading.coperato.net/gaya/api_ns/DisconnectCall/byAgent'
+        AGENT_NUMBER = '997'
+        r = requests.post(
+            HANGUP_ENDPOINT,
+            data={
+                'agent': AGENT_NUMBER,
+            }
+        )
+        return HttpResponse('')

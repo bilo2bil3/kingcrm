@@ -140,7 +140,16 @@
                                     {{ lead.email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ lead.phone_number }}
+                                    {% if request.user.is_organisor %}
+                                        {{ lead.phone_number }}
+                                        <br>
+                                    {% endif %}
+                                    <button class="click2call-call mt-3 text-white bg-indigo-500 border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
+                                        call
+                                    </button>
+                                    <button class="click2call-hangup mt-3 text-white bg-red-500 border-0 py-2 px-3 focus:outline-none hover:bg-red-600 rounded">
+                                        hangup
+                                    </button>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ lead.country }}
@@ -274,4 +283,5 @@
     </div>
 </section>
 <script src="{% static 'js/delete-or-assign-leads.js' %}"></script>
+<script src="{% static 'js/click2call.js' %}"></script>
 {% endblock content %}
