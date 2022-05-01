@@ -194,3 +194,4 @@ LOGGING = {
 }
 
 # TAILWIND_APP_NAME = 'theme'
+TIME_ZONE = 'Africa/Cairo'

@@ -34,6 +34,7 @@ from urllib.parse import (
     parse_qs
 )
 import json
+import csv
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +103,30 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
     template_name = "leads/lead_list.html"
     context_object_name = "leads"
     paginate_by = 7
+
+    # override default get method
+    # to handle both cases of:
+    # generate leads csv or view leads
+    def get(self, request, *args, **kwargs):
+        if 'export=1' in request.get_full_path():
+            response = HttpResponse(content_type='text/csv',)
+            response['Content-Disposition'] = 'attachment; filename="exported-leads.csv"'
+            writer = csv.writer(response)
+            qs = self.get_queryset()
+            writer.writerow([
+                'FIRST NAME', 'LAST NAME', 'SOURCE', 'EMAIL', 'CELL PHONE NUMBER',
+                'COUNTRY', 'CAMPAIGN', 'AGENT', 'CATEGORY', 'DATE'
+            ])
+            for lead in qs:
+                writer.writerow([
+                    lead.first_name, lead.last_name, lead.source,
+                    lead.email, lead.phone_number, lead.country,
+                    lead.campaign, (f'{lead.agent.user.first_name} {lead.agent.user.last_name}' if lead.agent else 'Unassigned'),
+                    (lead.category.name if lead.category else 'New'), lead.date_added.date()
+                ])
+            return response
+        else:
+            return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         user = self.request.user
@@ -186,7 +211,8 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         # sorting
         ordering = self.request.GET.get('order_by', None)
         if ordering is None:
-            return queryset
+            # add default ordering
+            ordering = '-date_added'
         if ordering == 'country_desc':
             ordering = '-country'
         elif ordering == 'country_asc':
@@ -207,9 +233,6 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             ordering = '-date_added'
         elif ordering == 'date_asc':
             ordering = 'date_added'
-        # add default ordering
-        else:
-            ordering = '-date_added'
         return queryset.order_by(ordering)
     
     def get_context_data(self, **kwargs):
@@ -237,6 +260,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         for i in range(max(1, page_obj.number - 5), min(page_obj.number + 5, page_obj.paginator.num_pages) + 1):
             ten_pages.append({i: add_query_string(url, {'page': i})})
         context.update({'ten_pages': ten_pages})
+
+        # add export link
+        export_link = add_query_string(url, {'export': 1})
+        context.update({'export_link': export_link})
 
         # to assign leads from lead_list view
         # we need show all agents
