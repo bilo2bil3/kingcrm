@@ -54,7 +54,6 @@ function showAssignLeadsForm() {
 
 function assignSelectedLeads(selectAllBtn) {
   // get leads
-  // console.log('assign leads');
   const leadsToAssign = [];
   document.querySelectorAll('input.select-lead:checked').forEach(e => {
     leadsToAssign.push(e.value);
@@ -63,9 +62,8 @@ function assignSelectedLeads(selectAllBtn) {
   if (!leadsToAssign.length) {
     return;
   }
-  // console.log('leads to assign:', leadsToAssign);
-  // get agent
-  const agentToAssign = document.getElementById('agent-to-assign').value;
+  // get agents
+  const agents = $('#agent-to-assign').select2('data').map(e=> e.id);
 
   // sending the request
   const ASSIGN_ENDPOINT = '/leads/assign-selected-leads'
@@ -74,12 +72,38 @@ function assignSelectedLeads(selectAllBtn) {
     .find(row => row.startsWith('csrftoken='))
     .split('=')[1];
   const HEADERS = { 'content-type': 'application/json', 'X-CSRFToken': CSRF_TOKEN, }
-  const PAYLOAD = { leads: leadsToAssign, agent: agentToAssign, url: window.location.href }
+  const PAYLOAD = { leads: leadsToAssign, agents: agents, url: window.location.href }
   fetch(ASSIGN_ENDPOINT, { redirect: 'follow', method: 'POST', headers: HEADERS, body: JSON.stringify(PAYLOAD) })
     .then(res => {
       if (res.ok) {
-        // console.log('successfuly deleted leads!')
-        // console.log('res url:', res.url);
+        window.location.href = res.url;
+      }
+    })
+    .catch(err => console.log(err));
+}
+
+function assignSelectedLeadsRandomly(selectAllBtn) {
+  // get leads
+  const leadsToAssign = [];
+  document.querySelectorAll('input.select-lead:checked').forEach(e => {
+    leadsToAssign.push(e.value);
+  })
+  selectAllBtn.checked= false;
+  if (!leadsToAssign.length) {
+    return;
+  }
+
+  // sending the request
+  const ASSIGN_ENDPOINT = '/leads/assign-selected-leads-randomly';
+  const CSRF_TOKEN = document.cookie
+    .split(';')
+    .find(row => row.startsWith('csrftoken='))
+    .split('=')[1];
+  const HEADERS = { 'content-type': 'application/json', 'X-CSRFToken': CSRF_TOKEN, }
+  const PAYLOAD = { leads: leadsToAssign, url: window.location.href }
+  fetch(ASSIGN_ENDPOINT, { redirect: 'follow', method: 'POST', headers: HEADERS, body: JSON.stringify(PAYLOAD) })
+    .then(res => {
+      if (res.ok) {
         window.location.href = res.url;
       }
     })
@@ -97,12 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const showAssignBtn = document.getElementById('show-assign-leads');
   const hideAssignBtn = document.getElementById('hide-assign-leads');
   const assignSelectedBtn = document.getElementById('assign-leads');
+  const assignSelectedRandomlyBtn = document.getElementById('assign-leads-random');
   
   selectAllBtn.addEventListener('change', () => toggleAllCheckboxes(selectAllBtn));
   deleteSelectedBtn.addEventListener('click', () => deleteSelectedLeads(selectAllBtn));
   showAssignBtn.addEventListener('click', showAssignLeadsForm);
   hideAssignBtn.addEventListener('click', hideAssignLeadsForm);
   assignSelectedBtn.addEventListener('click', () => assignSelectedLeads(selectAllBtn));
+  assignSelectedRandomlyBtn.addEventListener('click', () => assignSelectedLeadsRandomly(selectAllBtn));
 
   // initially hide assign leads view #2
   // the one with two buttons: assign, cancel

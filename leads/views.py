@@ -144,6 +144,7 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             )
             # filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
+
         # print('###', self.request.GET)
         # if self.request.GET.get('first_name'):
         if '?' in self.request.get_full_path() and 'first_name' in self.request.get_full_path():
@@ -884,10 +885,35 @@ def assign_selected_leads(request):
     if request.method == 'POST':
         payload = json.loads(request.body)
         url = payload['url']
-        agent_id = payload['agent']
+        agent_ids = payload['agents']
         leads_to_assign = list(map(int, payload['leads']))
-        qs = Lead.objects.filter(pk__in=leads_to_assign)
-        qs.update(agent=agent_id)
+
+        # qs = Lead.objects.filter(pk__in=leads_to_assign)
+        # qs.update(agent=agent_id)
+
+        agents = Agent.objects.filter(pk__in=agent_ids)
+        agents_count = len(agents)
+        parts = partition_leads(leads_to_assign, agents_count)
+        for i, agent in enumerate(agents):
+            leads_per_agent = parts[i]
+            for lead_id in leads_per_agent:
+                Lead.objects.filter(pk=lead_id).update(agent=agent)
+        return HttpResponseRedirect(url)
+
+@login_required
+def assign_selected_leads_randomly(request):
+    if request.method == 'POST':
+        payload = json.loads(request.body)
+        url = payload['url']
+        leads_to_assign = list(map(int, payload['leads']))
+
+        agents = Agent.objects.all()
+        agents_count = Agent.objects.count()
+        parts = partition_leads(leads_to_assign, agents_count)
+        for i, agent in enumerate(agents):
+            leads_per_agent = parts[i]
+            for lead_id in leads_per_agent:
+                Lead.objects.filter(pk=lead_id).update(agent=agent)
         return HttpResponseRedirect(url)
 
 

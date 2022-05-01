@@ -33,6 +33,7 @@ urlpatterns = [
     # AJAX URLs
     path('delete-selected-leads', views.delete_selected_leads, name='delete-selected-leads'),
     path('assign-selected-leads', views.assign_selected_leads, name='assign-selected-leads'),
+    path('assign-selected-leads-randomly', views.assign_selected_leads_randomly, name='assign-selected-leads-randomly'),
 
     # path('export-leads', views.export_leads, name='export-leads'),
 
