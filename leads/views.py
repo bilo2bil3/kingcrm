@@ -692,12 +692,20 @@ def partition_leads(leads, agents_count):
 def add_leads_and_assign_random_agent(request, f):
     f = io.StringIO(f.read().decode('utf-8'))
     csv_reader = DictReader(f)
-    csv_rows = list(csv_reader)
+
+    # to skip duplicate leads while uploading
+    # we need to keep track of leads added for current session
+    leads_to_add = []
+    for row in csv_reader:
+        if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
+            continue
+        leads_to_add.append(row)
 
     agents = Agent.objects.all()
     agents_count = Agent.objects.count()
 
-    parts = partition_leads(csv_rows, agents_count)
+    parts = partition_leads(leads_to_add, agents_count)
+
     for i, agent in enumerate(agents):
         leads_per_agent = parts[i]
         for lead in leads_per_agent:
@@ -708,6 +716,11 @@ def add_leads_and_assign_random_agent(request, f):
             phone_number = lead['phone_number']
             country = lead['country']
             campaign = lead['campaign']
+
+            # skip duplicate leads
+            # if new lead exist in db
+            if phone_number in Lead.objects.values_list('phone_number', flat=True):
+                continue
 
             Lead.objects.create(
                 organisation=request.user.userprofile,
@@ -725,14 +738,28 @@ def add_leads_and_assign_random_agent(request, f):
 def add_leads_and_assign_selected_agent(request, f, agent):
     f = io.StringIO(f.read().decode('utf-8'))
     csv_reader = DictReader(f)
+
+    # to skip duplicate leads while uploading
+    # we need to keep track of leads added for current session
+    leads_to_add = []
     for row in csv_reader:
-        first_name = row['first_name']
-        last_name = row['last_name']
-        source = row['source']
-        email = row['email']
-        phone_number = row['phone_number']
-        country = row['country']
-        campaign = row['campaign']
+        if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
+            continue
+        leads_to_add.append(row)
+
+    for lead in leads_to_add:
+        first_name = lead['first_name']
+        last_name = lead['last_name']
+        source = lead['source']
+        email = lead['email']
+        phone_number = lead['phone_number']
+        country = lead['country']
+        campaign = lead['campaign']
+
+        # skip duplicate leads
+        # if new lead exist in db
+        if phone_number in Lead.objects.values_list('phone_number', flat=True):
+            continue
 
         Lead.objects.create(
             organisation=request.user.userprofile,
@@ -750,14 +777,28 @@ def add_leads_and_assign_selected_agent(request, f, agent):
 def add_leads(request, f):
     f = io.StringIO(f.read().decode('utf-8'))
     csv_reader = DictReader(f)
+
+    # to skip duplicate leads while uploading
+    # we need to keep track of leads added for current session
+    leads_to_add = []
     for row in csv_reader:
-        first_name = row['first_name']
-        last_name = row['last_name']
-        source = row['source']
-        email = row['email']
-        phone_number = row['phone_number']
-        country = row['country']
-        campaign = row['campaign']
+        if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
+            continue
+        leads_to_add.append(row)
+
+    for lead in leads_to_add:
+        first_name = lead['first_name']
+        last_name = lead['last_name']
+        source = lead['source']
+        email = lead['email']
+        phone_number = lead['phone_number']
+        country = lead['country']
+        campaign = lead['campaign']
+
+        # skip duplicate leads
+        # if new lead exist in db
+        if phone_number in Lead.objects.values_list('phone_number', flat=True):
+            continue
 
         Lead.objects.create(
             organisation=request.user.userprofile,
