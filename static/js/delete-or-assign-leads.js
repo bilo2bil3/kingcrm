@@ -25,6 +25,11 @@ function deleteSelectedLeads(selectAllBtn) {
   // console.log('leads to delete:', leadsToDelete);
 
   // sending the request
+  const answer = confirm('Are you sure you want to delete the selected leads?')
+  if (!answer) {
+    console.log('cancelled');
+    return;
+  }
   const DELETE_ENDPOINT = '/leads/delete-selected-leads'
   const CSRF_TOKEN = document.cookie
     .split(';')
@@ -66,6 +71,11 @@ function assignSelectedLeads(selectAllBtn) {
   const agents = $('#agent-to-assign').select2('data').map(e=> e.id);
 
   // sending the request
+  const answer = confirm('Are you sure you want to assign the selected leads?')
+  if (!answer) {
+    console.log('cancelled');
+    return;
+  }
   const ASSIGN_ENDPOINT = '/leads/assign-selected-leads'
   const CSRF_TOKEN = document.cookie
     .split(';')
@@ -94,6 +104,11 @@ function assignSelectedLeadsRandomly(selectAllBtn) {
   }
 
   // sending the request
+  const answer = confirm('Are you sure you want to assign the selected leads?')
+  if (!answer) {
+    console.log('cancelled');
+    return;
+  }
   const ASSIGN_ENDPOINT = '/leads/assign-selected-leads-randomly';
   const CSRF_TOKEN = document.cookie
     .split(';')
