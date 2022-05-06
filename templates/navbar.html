@@ -1,78 +1,34 @@
-
-<header>
-   <!-- Header -->
-            <div class="fixed w-full flex items-center justify-between h-14 text-white z-10">
-              <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-blue-800 dark:bg-gray-800 border-none">
-                {% if request.user.is_authenticated %}
-                <span class="hidden md:block">{{ request.user.username }}</span>
-                {% else %}
-              </div>
-              <div class="flex justify-between items-center h-14 bg-blue-800 dark:bg-gray-800 header-right">
-                <div class="bg-white rounded flex items-center w-full max-w-xl mr-4 p-2 shadow-sm border border-gray-200">
-                  <button class="outline-none focus:outline-none">
-                    <svg class="w-5 text-gray-600 h-5 cursor-pointer" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                  </button>
-                  <input type="search" name="" id="" placeholder="Search" class="w-full pl-3 text-sm text-black outline-none focus:outline-none bg-transparent" />
-                </div>
-                <ul class="flex items-center">
-                  <li>
-                    <button
-                      aria-hidden="true"
-                      @click="toggleTheme"
-                      class="group p-2 transition-colors duration-200 rounded-full shadow-md bg-blue-200 hover:bg-blue-200 dark:bg-gray-50 dark:hover:bg-gray-200 text-gray-900 focus:outline-none"
-                    >
-                      <svg
-                        x-show="isDark"
-                        width="24"
-                        height="24"
-                        class="fill-current text-gray-700 group-hover:text-gray-500 group-focus:text-gray-700 dark:text-gray-700 dark:group-hover:text-gray-500 dark:group-focus:text-gray-700"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke=""
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                        />
-                      </svg>
-                      <svg
-                        x-show="!isDark"
-                        width="24"
-                        height="24"
-                        class="fill-current text-gray-700 group-hover:text-gray-500 group-focus:text-gray-700 dark:text-gray-700 dark:group-hover:text-gray-500 dark:group-focus:text-gray-700"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke=""
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                        />
-                      </svg>
-                    </button>
-                  </li>
-                  <li>
-                    <div class="block w-px h-6 mx-3 bg-gray-400 dark:bg-gray-700"></div>
-                  </li>
-                  <li>
-                    {% if request.user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="flex items-center mr-4 hover:text-blue-100">
-                      <span class="inline-flex mr-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                      </span>
-                      Logout
-                    </a>
-                    {% else %}
-                  </li>
-                  
-                </ul>
-              </div>
-            </div>
-            <!-- ./Header -->
+<header class="text-gray-700 body-font">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a href="{% url 'dashboard' %}" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+<!--        <img src="https://w2m-trading.com/wp-content/uploads/elementor/thumbs/logo-headeeer-pnlcrmpzob8k1rxjayshubxoq4ue4j87ry3uly3fjw.png" class="w-10 h-auto" alt="..." /> -->
+        <span class="ml-3 font-semibold text-[#004aad] text-xl">KING CRM</span>
+      </a>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        {% if not request.user.is_authenticated %}
+          <a href="{% url 'signup' %}" class="mr-5 font-semibold text-[#004aad] hover:text-gray-900">Signup</a>
+        {% else %}
+          {% if request.user.is_organisor %}
+          <a href="{% url 'agents:agent-list' %}" class="mr-5 font-semibold text-[#004aad] hover:text-gray-900">Agents</a>
+          {% endif %}
+          <a href="{% url 'leads:lead-list' %}" class="mr-5 font-semibold text-[#004aad] hover:text-gray-900">Leads</a>
+        {% endif %}
+      </nav>
+      {% if request.user.is_authenticated %}
+        Logged in as: {{ request.user.username }}
+        <a href="{% url 'logout' %}" class="ml-3 inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">
+          Logout
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+        </a>
+      {% else %}
+      <a href="{% url 'login' %}" class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">
+          Login
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+      </a>
+      {% endif %}
+    </div>
 </header>
