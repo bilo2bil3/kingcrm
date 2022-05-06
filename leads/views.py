@@ -920,41 +920,37 @@ def assign_selected_leads_randomly(request):
 @login_required
 def click_to_call(request):
     if request.method == 'POST':
-        print('###click2call: calling')
-        CALL_ENDPOINT = 'https://w2mtrading.coperato.net/gaya/api_ns/Click2Call/byAgent'
-        HANGUP_ENDPOINT = ''
+        CALL_ENDPOINT = 'https://w2mtproxy.coperato.net/gaya/api_ns/Click2Call/byAgent'
         AGENT_NUMBER = '997'
         payload = json.loads(request.body)
         lead_id = payload['lead']
-        # client_number = payload['phone_num']
-        # client_number = '+201023459934'
         client_number = Lead.objects.get(pk=lead_id).phone_number
-        print('###', client_number)
+        print(f'###click2call: calling {client_number}')
         try:
             r = requests.post(
                 CALL_ENDPOINT,
                 data={
                     'agent': AGENT_NUMBER,
-                    'phone_num': client_number
+                    'phone_num': client_number,
+                    'secret': '75C82C2E14C50A7A4DED5EBB22DCADA4',
                 }
             )
             return HttpResponse('')
         except Exception as e:
             return HttpResponse(str(e))
-        # print('###call response', r.request.body)
-        # print('###call response', r.json())
 
 @login_required
 def hangup_call(request):
     if request.method == 'POST':
         print('###click2call: disconneting')
-        HANGUP_ENDPOINT = 'https://w2mtrading.coperato.net/gaya/api_ns/DisconnectCall/byAgent'
+        HANGUP_ENDPOINT = 'https://w2mtproxy.coperato.net/gaya/api_ns/DisconnectCall/byAgent'
         AGENT_NUMBER = '997'
         try:
             r = requests.post(
                 HANGUP_ENDPOINT,
                 data={
                     'agent': AGENT_NUMBER,
+                    'secret': '75C82C2E14C50A7A4DED5EBB22DCADA4',
                 }
             )
             return HttpResponse('')
