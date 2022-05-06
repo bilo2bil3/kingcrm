@@ -930,16 +930,19 @@ def click_to_call(request):
         # client_number = '+201023459934'
         client_number = Lead.objects.get(pk=lead_id).phone_number
         print('###', client_number)
-        r = requests.post(
-            CALL_ENDPOINT,
-            data={
-                'agent': AGENT_NUMBER,
-                'phone_num': client_number
-            }
-        )
+        try:
+            r = requests.post(
+                CALL_ENDPOINT,
+                data={
+                    'agent': AGENT_NUMBER,
+                    'phone_num': client_number
+                }
+            )
+            return HttpResponse('')
+        except Exception as e:
+            return HttpResponse(str(e))
         # print('###call response', r.request.body)
         # print('###call response', r.json())
-        return HttpResponse('')
 
 @login_required
 def hangup_call(request):
@@ -947,10 +950,13 @@ def hangup_call(request):
         print('###click2call: disconneting')
         HANGUP_ENDPOINT = 'https://w2mtrading.coperato.net/gaya/api_ns/DisconnectCall/byAgent'
         AGENT_NUMBER = '997'
-        r = requests.post(
-            HANGUP_ENDPOINT,
-            data={
-                'agent': AGENT_NUMBER,
-            }
-        )
-        return HttpResponse('')
+        try:
+            r = requests.post(
+                HANGUP_ENDPOINT,
+                data={
+                    'agent': AGENT_NUMBER,
+                }
+            )
+            return HttpResponse('')
+        except Exception as e:
+            return HttpResponse(str(e))
