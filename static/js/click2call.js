@@ -10,7 +10,6 @@ function click2Call(event) {
   const PAYLOAD = { lead: btn.dataset.lead }  
   fetch(CALL_ENDPOINT, { method: 'POST', body: JSON.stringify(PAYLOAD), headers: HEADERS })
     .then(res => {
-      console.log(res);
       if (res.ok) {
         console.log('successfuly called client!');
         alert(`Calling ${btn.dataset.firstname} ${btn.dataset.firstname}`);
@@ -18,8 +17,8 @@ function click2Call(event) {
         btn.style.display = 'none';
         // show hangup btn
         btn.nextElementSibling.style.display = 'inline';
-        console.log(res);
       }
+      return res.text();
     })
     .then(data => console.log(data))
     .catch(err => console.log(err));
@@ -37,15 +36,14 @@ function hangupCall(event) {
   const HEADERS = { 'content-type': 'application/json', 'X-CSRFToken': CSRF_TOKEN, }
   fetch(HANGUP_ENDPOINT, { method: 'POST', body: JSON.stringify(PAYLOAD), headers: HEADERS })
     .then(res => {
-      console.log(res);
       if (res.ok) {
         console.log('successfuly disconnected from call');
         // hide hangup btn
         btn.style.display = 'none';
         // show call btn
         btn.previousElementSibling.style.display = 'inline';
-        console.log(res);
       }
+      return res.text();
     })
     .then(data => console.log(data))
     .catch(err => console.log(err));
