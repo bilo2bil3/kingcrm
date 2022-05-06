@@ -1,10 +1,14 @@
-  .dropbtn {
-    background-color: #04AA6D;
+.dropbtn {
+    background-color: #004aad;
     color: white;
-    padding: 16px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-right: 30px;
+    padding-left: 30px;
     font-size: 16px;
     border: none;
-  }
+    border-radius: 5px;
+}
   
   .dropdown {
     position: relative;
