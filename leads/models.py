@@ -79,3 +79,14 @@ def post_user_created_signal(sender, instance, created, **kwargs):
 
 
 post_save.connect(post_user_created_signal, sender=User)
+
+### load from google sheets ###
+class LeadsSheet(models.Model):
+    source = models.CharField(max_length=64)
+    url = models.URLField()
+    sheet_name = models.CharField(max_length=64)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    agent = models.ForeignKey("Agent", blank=True, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.url

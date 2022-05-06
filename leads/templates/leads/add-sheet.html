@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+
+{% block content %}
+
+<div class="max-w-lg mx-auto">
+    <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
+    <div class="py-5 border-t border-gray-200">
+        <h1 class="text-4xl text-gray-800">Load leads from Google Sheets</h1>
+    </div>
+    <form method="post" class="mt-5">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
+            Add
+        </button>
+    </form>
+    <div>
+        <h3>sheets</h3>
+        <div class="w-full mx-auto overflow-auto">
+            <table class="table-auto w-full text-left whitespace-no-wrap">
+              <thead>
+                <tr>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Source</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Url</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Sheet name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sheet in sheets %}
+                <tr>
+                    <td class="px-4 py-3">{{ sheet.source }}</td>
+                    <td class="px-4 py-3">{{ sheet.url }}</td>
+                    <td class="px-4 py-3">{{ sheet.sheet_name }}</td>
+                </tr>
+                {%endfor %}
+              </tbody>
+            </table>
+    </div>
+</div>
+
+{% endblock content %}

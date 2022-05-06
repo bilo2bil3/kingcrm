@@ -10,8 +10,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
+from django.urls import reverse_lazy
 from agents.mixins import OrganisorAndLoginRequiredMixin
-from .models import Lead, Agent, Category, FollowUp
+from .models import Lead, Agent, Category, FollowUp, LeadsSheet
 from .forms import (
     LeadForm, 
     LeadModelForm, 
@@ -23,6 +24,7 @@ from .forms import (
     UploadLeadsForm,
     UploadLeadsWithAgentForm,
     SearchLeadsForm,
+    LeadsSheetForm,
 )
 from csv import DictReader
 import io
@@ -956,3 +958,16 @@ def hangup_call(request):
             return HttpResponse('')
         except Exception as e:
             return HttpResponse(str(e))
+
+class SheetCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+    form_class = LeadsSheetForm
+    template_name = 'leads/add-sheet.html'
+    success_url = reverse_lazy('leads:lead-list')
+
+    def form_valid(self, form):
+        form.instance.organisation = self.request.user.userprofile
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        kwargs['sheets'] = LeadsSheet.objects.all()
+        return super().get_context_data(**kwargs)

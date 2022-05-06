@@ -41,6 +41,9 @@ urlpatterns = [
     path('click2call', views.click_to_call, name='click2call'),
     path('click2call-hangup', views.hangup_call, name='click2call-hangup'),
 
+    # google sheets
+    path('add-sheet', views.SheetCreateView.as_view(), name='add-sheet'),
+
     path('categories/', CategoryListView.as_view(), name='category-list'),
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),
     path('categories/<int:pk>/update/', CategoryUpdateView.as_view(), name='category-update'),
