@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 leads_to_add.append(row)
             
             for lead in leads_to_add:
-                [first_name, last_name, source, email, phone_number, country, campaign] = lead
+                [first_name, last_name, source, service, email, phone_number, country, campaign] = lead
 
                 # skip duplicate leads
                 # if new lead exist in db
@@ -45,6 +45,7 @@ class Command(BaseCommand):
                     first_name=first_name,
                     last_name=last_name,
                     source=source,
+                    service=service,
                     email=email,
                     phone_number=phone_number,
                     country=country,

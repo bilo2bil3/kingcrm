@@ -14,6 +14,7 @@ class LeadModelForm(forms.ModelForm):
             'first_name',
             'last_name',
             'source',
+            'service',
             'agent',
             'description',
             'phone_number',
@@ -108,6 +109,7 @@ class SearchLeadsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['source'] = forms.MultipleChoiceField(choices=self.get_choices('source'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['service'] = forms.MultipleChoiceField(choices=self.get_choices('service'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
         self.fields['country'] = forms.MultipleChoiceField(choices=self.get_choices('country'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
         self.fields['agent'] = forms.MultipleChoiceField(choices=self.get_agents(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
         self.fields['campaign'] = forms.MultipleChoiceField(choices=self.get_choices('campaign'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))

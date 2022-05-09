@@ -117,12 +117,12 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             writer = csv.writer(response)
             qs = self.get_queryset()
             writer.writerow([
-                'FIRST NAME', 'LAST NAME', 'SOURCE', 'EMAIL', 'CELL PHONE NUMBER',
+                'FIRST NAME', 'LAST NAME', 'SOURCE', 'SERVICE', 'EMAIL', 'CELL PHONE NUMBER',
                 'COUNTRY', 'CAMPAIGN', 'AGENT', 'CATEGORY', 'DATE'
             ])
             for lead in qs:
                 writer.writerow([
-                    lead.first_name, lead.last_name, lead.source,
+                    lead.first_name, lead.last_name, lead.source, lead.service,
                     lead.email, lead.phone_number, lead.country,
                     lead.campaign, (f'{lead.agent.user.first_name} {lead.agent.user.last_name}' if lead.agent else 'Unassigned'),
                     (lead.category.name if lead.category else 'New'), lead.date_added.date()
@@ -160,6 +160,7 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             phone_number_q = Q(phone_number__icontains=phone_number)
 
             sources = self.request.GET.getlist('source')
+            services = self.request.GET.getlist('service')
             countries = self.request.GET.getlist('country')
             campaigns = self.request.GET.getlist('campaign')
             agents = self.request.GET.getlist('agent')
@@ -171,6 +172,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                 sources_q = Q(source__startswith='')
             else:
                 sources_q = Q(source__in=sources)
+            if not services:
+                services_q = Q(service__startswith='')
+            else:
+                services_q = Q(service__in=services)
             if not countries:
                 countries_q = Q(country__startswith='')
             else:
@@ -186,6 +191,7 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                 & email_q
                 & phone_number_q
                 & sources_q
+                & services_q
                 & countries_q
                 & campaigns_q
             )
@@ -700,6 +706,7 @@ def add_leads_and_assign_random_agent(request, f):
     # we need to keep track of leads added for current session
     leads_to_add = []
     for row in csv_reader:
+        print(row)
         if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
             continue
         leads_to_add.append(row)
@@ -715,6 +722,7 @@ def add_leads_and_assign_random_agent(request, f):
             first_name = lead['first_name']
             last_name = lead['last_name']
             source = lead['source']
+            service = lead['service']
             email = lead['email']
             phone_number = lead['phone_number']
             country = lead['country']
@@ -730,6 +738,7 @@ def add_leads_and_assign_random_agent(request, f):
                 first_name=first_name,
                 last_name=last_name,
                 source=source,
+                service=service,
                 email=email,
                 phone_number=phone_number,
                 country=country,
@@ -754,6 +763,7 @@ def add_leads_and_assign_selected_agent(request, f, agent):
         first_name = lead['first_name']
         last_name = lead['last_name']
         source = lead['source']
+        service = lead['service']
         email = lead['email']
         phone_number = lead['phone_number']
         country = lead['country']
@@ -769,6 +779,7 @@ def add_leads_and_assign_selected_agent(request, f, agent):
             first_name=first_name,
             last_name=last_name,
             source=source,
+            service=service,
             email=email,
             phone_number=phone_number,
             country=country,
@@ -793,6 +804,7 @@ def add_leads(request, f):
         first_name = lead['first_name']
         last_name = lead['last_name']
         source = lead['source']
+        service = lead['service']
         email = lead['email']
         phone_number = lead['phone_number']
         country = lead['country']
@@ -808,6 +820,7 @@ def add_leads(request, f):
             first_name=first_name,
             last_name=last_name,
             source=source,
+            service=service,
             email=email,
             phone_number=phone_number,
             country=country,
