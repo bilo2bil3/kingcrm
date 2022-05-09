@@ -37,6 +37,7 @@ class Lead(models.Model):
     converted_date = models.DateTimeField(null=True, blank=True)
     country = models.CharField(max_length=64, default='')
     campaign = models.CharField(max_length=64, default='')
+    tags = models.ManyToManyField('Tag', related_name='leads')
 
     objects = LeadManager()
 
@@ -69,6 +70,13 @@ class Agent(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=30)  # New, Contacted, Converted, Unconverted
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=32)
 
     def __str__(self):
         return self.name

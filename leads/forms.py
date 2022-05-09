@@ -2,12 +2,17 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UsernameField
-from .models import Lead, Agent, Category, FollowUp, LeadsSheet
+from .models import Lead, Agent, Category, FollowUp, LeadsSheet, Tag
 
 User = get_user_model()
 
 
 class LeadModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['remove tags'] = forms.MultipleChoiceField(choices=self.get_existing_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['add tags'] = forms.MultipleChoiceField(choices=self.get_new_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+
     class Meta:
         model = Lead
         fields = (
@@ -37,6 +42,24 @@ class LeadModelForm(forms.ModelForm):
         # if first_name + last_name != "Joe Soap":
         #     raise ValidationError("Your name is not Joe Soap")
 
+    def get_existing_tags(self):
+        return [('', '------')] + [(tag.pk, tag) for tag in self.instance.tags.all()]
+
+    def get_new_tags(self):
+        return [('', '------')] + [(tag.pk, tag) for tag in Tag.objects.exclude(leads__pk=self.instance.pk)]
+
+    def save(self):
+        try:
+            tags_to_add = self.cleaned_data.pop('add tags')
+            tags_to_remove = self.cleaned_data.pop('remove tags')
+        except KeyError:
+            pass
+        else:
+            for tag_id in tags_to_add:
+                self.instance.tags.add(tag_id)
+            for tag_id in tags_to_remove:
+                self.instance.tags.remove(tag_id)
+        super().save()
 
 
 class LeadForm(forms.Form):
@@ -114,6 +137,7 @@ class SearchLeadsForm(forms.Form):
         self.fields['agent'] = forms.MultipleChoiceField(choices=self.get_agents(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
         self.fields['campaign'] = forms.MultipleChoiceField(choices=self.get_choices('campaign'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
         self.fields['category'] = forms.MultipleChoiceField(choices=self.get_catgs(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields['tag'] = forms.MultipleChoiceField(choices=self.get_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
 
     # text input
     first_name = forms.CharField(required=False)
@@ -137,6 +161,9 @@ class SearchLeadsForm(forms.Form):
 
     def get_catgs(self):
         return [('', '------')] + [(catg.pk, catg) for catg in Category.objects.all()]
+
+    def get_tags(self):
+        return [('', '------')] + [(tag.pk, tag) for tag in Tag.objects.all()]
 
 ### load from google sheets ###
 class LeadsSheetForm(forms.ModelForm):

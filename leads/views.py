@@ -165,6 +165,7 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             campaigns = self.request.GET.getlist('campaign')
             agents = self.request.GET.getlist('agent')
             categories = self.request.GET.getlist('category')
+            tags = self.request.GET.getlist('tag')
             # charfields fileters
             # either membership filter (to include selected only)
             # or starts with empty str filter (to include all)
@@ -201,6 +202,8 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(agent__pk__in=agents)
             if categories:
                 queryset = queryset.filter(category__pk__in=categories)
+            if tags:
+                queryset = queryset.filter(tags__in=tags)
 
             # datetime filters
             # either in specific range
