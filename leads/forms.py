@@ -10,8 +10,12 @@ User = get_user_model()
 class LeadModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['remove tags'] = forms.MultipleChoiceField(choices=self.get_existing_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['add tags'] = forms.MultipleChoiceField(choices=self.get_new_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        # tags field
+        # should only appear when updating an existing lead
+        # not when creating a new lead
+        if self.instance.pk is not None:
+            self.fields['remove tags'] = forms.MultipleChoiceField(choices=self.get_existing_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+            self.fields['add tags'] = forms.MultipleChoiceField(choices=self.get_new_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
 
     class Meta:
         model = Lead
@@ -48,7 +52,7 @@ class LeadModelForm(forms.ModelForm):
     def get_new_tags(self):
         return [('', '------')] + [(tag.pk, tag) for tag in Tag.objects.exclude(leads__pk=self.instance.pk)]
 
-    def save(self):
+    def save(self, *args, **kwargs):
         try:
             tags_to_add = self.cleaned_data.pop('add tags')
             tags_to_remove = self.cleaned_data.pop('remove tags')
@@ -59,7 +63,7 @@ class LeadModelForm(forms.ModelForm):
                 self.instance.tags.add(tag_id)
             for tag_id in tags_to_remove:
                 self.instance.tags.remove(tag_id)
-        super().save()
+        return super().save(*args, **kwargs)
 
 
 class LeadForm(forms.Form):
