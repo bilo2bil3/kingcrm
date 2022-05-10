@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+
+{% block content %}
+
+<div class="max-w-lg mx-auto">
+    <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
+    <div class="py-5 border-t border-gray-200">
+        <h1 class="text-4xl text-gray-800">View, Delete and Add Tags</h1>
+    </div>
+    <form method="post" class="mt-5">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
+          Add
+        </button>
+    </form>
+    <div>
+        <h3>Tags</h3>
+        <div class="w-full mx-auto overflow-auto">
+            <table class="table-auto w-full text-left whitespace-no-wrap">
+              <thead>
+                <tr>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Name</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td class="px-4 py-3">{{ tag.name }}</td>
+                    <td class="px-4 py-3">
+                      <a href="{% url 'leads:delete-tag' tag.pk %}">delete</a>
+                    </td>
+                </tr>
+                {%endfor %}
+              </tbody>
+            </table>
+    </div>
+</div>
+
+{% endblock content %}

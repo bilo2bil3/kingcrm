@@ -12,7 +12,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
 from django.urls import reverse_lazy
 from agents.mixins import OrganisorAndLoginRequiredMixin
-from .models import Lead, Agent, Category, FollowUp, LeadsSheet
+from .models import Lead, Agent, Category, FollowUp, LeadsSheet, Tag
 from .forms import (
     LeadForm, 
     LeadModelForm, 
@@ -994,3 +994,18 @@ class SheetDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
     model = LeadsSheet
     success_url = reverse_lazy('leads:add-sheet')
     template_name = 'leads/delete-sheet.html'
+
+class TagCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+    model = Tag
+    fields = ('name',)
+    template_name = 'leads/add-tag.html'
+    success_url = reverse_lazy('leads:add-tag')
+
+    def get_context_data(self, **kwargs):
+        kwargs['tags'] = Tag.objects.all()
+        return super().get_context_data(**kwargs)
+
+class TagDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
+    model = Tag
+    success_url = reverse_lazy('leads:add-tag')
+    template_name = 'leads/delete-tag.html'
