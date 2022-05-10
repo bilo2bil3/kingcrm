@@ -938,7 +938,7 @@ def assign_selected_leads_randomly(request):
 @login_required
 def click_to_call(request):
     if request.method == 'POST':
-        CALL_ENDPOINT = 'https://w2mtproxy.coperato.net/gaya/api_ns/Click2Call/byAgent'
+        CALL_ENDPOINT = ' https://w2mtrading.coperato.net /gaya/api_ns/Click2Call/byAgent'
         AGENT_NUMBER = '997'
         payload = json.loads(request.body)
         lead_id = payload['lead']
@@ -961,7 +961,7 @@ def click_to_call(request):
 def hangup_call(request):
     if request.method == 'POST':
         print('###click2call: disconneting')
-        HANGUP_ENDPOINT = 'https://w2mtproxy.coperato.net/gaya/api_ns/DisconnectCall/byAgent'
+        HANGUP_ENDPOINT = ' https://w2mtrading.coperato.net /gaya/api_ns/DisconnectCall/byAgent'
         AGENT_NUMBER = '997'
         try:
             r = requests.post(
