@@ -24,6 +24,7 @@
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Source</th>
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Url</th>
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Sheet name</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -32,6 +33,9 @@
                     <td class="px-4 py-3">{{ sheet.source }}</td>
                     <td class="px-4 py-3">{{ sheet.url }}</td>
                     <td class="px-4 py-3">{{ sheet.sheet_name }}</td>
+                    <td class="px-4 py-3">
+                      <a href="{% url 'leads:delete-sheet' sheet.pk %}">delete</a>
+                    </td>
                 </tr>
                 {%endfor %}
               </tbody>
