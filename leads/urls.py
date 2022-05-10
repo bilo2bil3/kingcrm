@@ -43,6 +43,7 @@ urlpatterns = [
 
     # google sheets
     path('add-sheet', views.SheetCreateView.as_view(), name='add-sheet'),
+    path('sheets/<int:pk>/delete', views.SheetDeleteView.as_view(), name='delete-sheet'),
 
     path('categories/', CategoryListView.as_view(), name='category-list'),
     path('categories/<int:pk>/', CategoryDetailView.as_view(), name='category-detail'),
