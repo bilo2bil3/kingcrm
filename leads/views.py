@@ -42,6 +42,14 @@ import requests
 logger = logging.getLogger(__name__)
 
 
+import environ
+
+env = environ.Env()
+READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+if READ_DOT_ENV_FILE:
+    environ.Env.read_env()
+
+
 # CRUD+L - Create, Retrieve, Update and Delete + List
 
 
@@ -938,8 +946,8 @@ def assign_selected_leads_randomly(request):
 @login_required
 def click_to_call(request):
     if request.method == 'POST':
-        CALL_ENDPOINT = ' https://w2mtrading.coperato.net /gaya/api_ns/Click2Call/byAgent'
-        AGENT_NUMBER = '997'
+        CALL_ENDPOINT = env('CLICK2CALL_CALL_ENDPOINT')
+        AGENT_NUMBER = env('CLICK2CALL_AGENT_NUMBER')
         payload = json.loads(request.body)
         lead_id = payload['lead']
         client_number = Lead.objects.get(pk=lead_id).phone_number
@@ -947,11 +955,7 @@ def click_to_call(request):
         try:
             r = requests.post(
                 CALL_ENDPOINT,
-                data={
-                    'agent': AGENT_NUMBER,
-                    'phone_num': client_number,
-                    'secret': '75C82C2E14C50A7A4DED5EBB22DCADA4',
-                }
+                data={'agent': AGENT_NUMBER, 'phone_num': client_number}
             )
             return HttpResponse('')
         except Exception as e:
@@ -961,15 +965,12 @@ def click_to_call(request):
 def hangup_call(request):
     if request.method == 'POST':
         print('###click2call: disconneting')
-        HANGUP_ENDPOINT = ' https://w2mtrading.coperato.net /gaya/api_ns/DisconnectCall/byAgent'
-        AGENT_NUMBER = '997'
+        HANGUP_ENDPOINT = env('CLICK2CALL_HANGUP_ENDPOINT')
+        AGENT_NUMBER = env('CLICK2CALL_AGENT_NUMBER')
         try:
             r = requests.post(
                 HANGUP_ENDPOINT,
-                data={
-                    'agent': AGENT_NUMBER,
-                    'secret': '75C82C2E14C50A7A4DED5EBB22DCADA4',
-                }
+                data={'agent': AGENT_NUMBER}
             )
             return HttpResponse('')
         except Exception as e:
