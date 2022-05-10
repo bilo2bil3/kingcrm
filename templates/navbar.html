@@ -1,37 +1,20 @@
+
 <header class="flex flex-col flex-auto flex-shrink-0 antialiased bg-white dark:bg-gray-700 text-black dark:text-white">
   <div x-data="setup()" :class="{ 'dark': isDark }">
-<!--     <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
- <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-blue-800 dark:bg-gray-800 border-none">
-                <span class="hidden md:block">{{ request.user.username }}</span>
-              </div>
-      {% if request.user.is_authenticated %}
-        Logged in as: {{ request.user.username }}
-        <a href="{% url 'logout' %}" class="ml-3 inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">
-          Logout
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
-        </a>
-      {% else %}
-      <a href="{% url 'login' %}" class="inline-flex items-center bg-gray-200 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">
-          Login
-          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-      </a>
-      {% endif %}
-    </div> -->
+
                 <div class="fixed w-full flex items-center justify-between h-14 text-white z-10">
               <div class="flex items-center justify-start md:justify-center pl-3 w-14 md:w-64 h-14 bg-blue-800 dark:bg-gray-800 border-none">
                 <span class="hidden md:block">{{ request.user.username }}</span>
               </div>
-              <div class="flex justify-between items-center h-14 bg-blue-800 dark:bg-gray-800 header-right">
+              
+              <div class="flex justify-between items-center h-14 bg-blue-800 dark:bg-gray-800 header-right">{% if request.user.is_authenticated %}
                 <div class="bg-white rounded flex items-center w-full max-w-xl mr-4 p-2 shadow-sm border border-gray-200">
                   <button class="outline-none focus:outline-none">
                     <svg class="w-5 text-gray-600 h-5 cursor-pointer" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                   </button>
                   <input type="search" name="" id="" placeholder="Search" class="w-full pl-3 text-sm text-black outline-none focus:outline-none bg-transparent" />
                 </div>
+                
                 <ul class="flex items-center">
                   <li>
                     <button
@@ -75,29 +58,41 @@
                       </svg>
                     </button>
                   </li>
+              {% endif %}
+                  {% if request.user.is_authenticated %}
                   <li>
                     <div class="block w-px h-6 mx-3 bg-gray-400 dark:bg-gray-700"></div>
                   </li>
+
                   <li>
-                    <a href="{% url 'logout' %}" class="flex items-center mr-4 hover:text-blue-100">
+                
+          <a href="{% url 'logout' %}" class="flex items-center mr-4 hover:text-blue-100">
                       <span class="inline-flex mr-1">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                       </span>
                       Logout
                     </a>
-
+                    {% else %}
+                  </li>
+                <li>
+        
+                    <a href="{% url 'login' %}" class="flex items-center mr-4 hover:text-blue-100">
+                      <span class="inline-flex mr-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                      </span>
+                      Login
+                    </a>
+                  {% endif %}
                   </li>
                 </ul>
               </div>
             </div>
- </div>
-   
+</div>
+
 </header>
 
 
-
-
-
+    {% if request.user.is_authenticated %}
   <!-- Sidebar -->
             <div class="fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-blue-900 dark:bg-gray-900 h-full text-white transition-all duration-300 border-none z-10 sidebar">
               <div class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
@@ -186,3 +181,4 @@
               </div>
             </div>
             <!-- ./Sidebar -->
+{% endif %}
