@@ -3,13 +3,13 @@
 
 {% block content %}
 
-<div class="max-w-lg mx-auto">
+<div class="max-w-lg mx-auto mt-32 mb-52">
 
-    <div class="py-5 border-b border-gray-200">
+    <div class="py-5 border-b border-gray-200 ">
         <a class="hover:text-blue-500" href="{% url 'agents:agent-list' %}">Go back to agents</a>
     </div>
 
-    <h1 class="text-4xl text-gray-800">Create a new agent</h1>
+    <h1 class="text-4xl text-center text-[#004aad] font-extrabold mb-14">Create a new agent</h1>
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
