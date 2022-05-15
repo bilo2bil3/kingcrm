@@ -13,14 +13,21 @@
       <script src="https://cdn.tailwindcss.com"></script>
       <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.0/dist/alpine.min.js" defer></script>
 </head>
+
+
 <body>
-    <div class="w-full mx-auto">
+<div x-data="setup()" :class="{ 'dark': isDark }">
+    <div class="w-full h-screen mx-auto bg-white dark:bg-gray-900">
         {% include 'navbar.html' %}
         {% include 'messages.html' %}
         {% block content %}
         {% endblock content %}
     </div>
+    </div>
+
     {% include "scripts.html" %}
-    
+
 </body>
+
+
 </html>

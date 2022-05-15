@@ -3,40 +3,70 @@
 
 {% block content %}
 
-<div class="max-w-lg mx-auto">
-    <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
-    <div class="py-5 border-t border-gray-200">
-        <h1 class="text-4xl text-gray-800">View, Delete and Add Tags</h1>
-    </div>
-    <form method="post" class="mt-5">
+
+<section class="mx-16  mt-32 text-gray-700 body-font">
+  <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
+        <div class="items-center ">
+
+                <div class="flex flex-col text-center ">
+                <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Tags</h1>
+        
+                <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'leads:lead-list' %}">
+                    Go back to leads
+                </a><br>
+</div>
+        </div>
+        <div class="w-1/2 mb-10">
+            <form method="post" class="mt-5">
         {% csrf_token %}
         {{ form|crispy }}
         <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
-          Add
+            Add
         </button>
     </form>
-    <div>
-        <h3>Tags</h3>
-        <div class="w-full mx-auto overflow-auto">
-            <table class="table-auto w-full text-left whitespace-no-wrap">
-              <thead>
-                <tr>
-                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Name</th>
-                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Delete</th>
-                </tr>
-              </thead>
+</div>
+        <div class="flex flex-col w-full">
+            <div class="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
+            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                <div class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg">
+                <table class="min-w-full divide-y">
+                    <thead class="bg-gray-50" >
+                        <tr>
+
+                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                           Tag Name
+                           </th>
+                              <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                           Delete
+                           </th>
+                        </tr>
+                    </thead>
+        
+<tbody>
               <tbody>
                 {% for tag in tags %}
-                <tr>
-                    <td class="px-4 py-3">{{ tag.name }}</td>
-                    <td class="px-4 py-3">
-                      <a href="{% url 'leads:delete-tag' tag.pk %}">delete</a>
-                    </td>
-                </tr>
-                {%endfor %}
-              </tbody>
-            </table>
-    </div>
-</div>
+
+                            <tr class="bg-gray-100 dark:bg-gray-900 text-center">
+
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
+                                {{ tag.name }}
+                                </td>
+
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                    <a href="{% url 'leads:delete-tag' tag.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
+                                        Delete
+                                    </a>
+                                </td>
+
+                            </tr>
+    {%endfor %}
+                    </tbody>
+                </table>
+
+
+</div></div></div></div></div>
+    </section> 
+
+
 
 {% endblock content %}
