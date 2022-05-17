@@ -211,16 +211,6 @@ class LeadsSheetForm(forms.ModelForm):
 
 
 ### agent stats/reports ###
-class AgentModelChoiceField(forms.ModelChoiceField):
-    """a custom ModelChoiceField that
-    shows agent's first and last name
-    as a label -for html option tag-
-    instead of default one (which is set to obj's __str__)."""
-
-    def label_from_instance(self, agent) -> str:
-        return f"{agent.user.first_name} {agent.user.last_name}"
-
-
 class StatsFilterForm(forms.Form):
     """
     to show agent stats during a specific period,
@@ -231,7 +221,7 @@ class StatsFilterForm(forms.Form):
         required=False, widget=DateInput(attrs={"required": "required"})
     )
     end_date = forms.DateField(required=False, widget=DateInput())
-    agent = AgentModelChoiceField(
+    agent = forms.ModelChoiceField(
         queryset=Agent.objects.all(),
         widget=forms.SelectMultiple(
             attrs={"multiple": "multiple", "required": "required"}

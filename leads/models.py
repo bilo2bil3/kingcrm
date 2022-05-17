@@ -75,7 +75,7 @@ class Agent(models.Model):
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.email
+        return f"{self.user.first_name} {self.user.last_name}"
 
 
 class Category(models.Model):
