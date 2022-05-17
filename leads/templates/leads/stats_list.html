@@ -9,7 +9,11 @@
   <a class="hover:text-blue-500" href="{% url 'leads:stats_filter' %}">Select Agent</a>
   <div class="py-5 border-t border-gray-200">
     <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Agent stats</h1>
-    <p class="text-center">Start date: {{ start_date }} | End date: {{ end_date }}</p>
+    <p class="text-center">
+      Start date: {{ start_date }} |
+      End date: {{ end_date }} |
+      <a class="hover:text-blue-500" href="{{ export_link }}">Export</a>
+    </p>
   </div>
   <!-- <div class="lg:w-2/3 w-full mx-auto overflow-auto"></div> -->
   <div class="w-full mx-auto overflow-auto flex justify-between">

@@ -34,6 +34,7 @@ import json
 import csv
 import requests
 from . import stats
+from . import exporter
 
 logger = logging.getLogger(__name__)
 
@@ -1046,7 +1047,32 @@ class StatsListView(OrganisorAndLoginRequiredMixin, generic.ListView):
                 "end_date": end_date,
             }
         )
+        export_link = add_query_string(self.request.get_full_path(), {"export": 1})
+        context.update({"export_link": export_link})
         return context
+
+    def get(self, request, *args, **kwargs):
+        """a custom handler for http get that can handle both cases of:
+        - show stats at a webpage
+        - export stats as a csv file
+        """
+        if "export=1" in request.get_full_path():
+            agents_ids = self.request.GET.getlist("agent")
+            start_date = self.request.GET["start_date"]
+            end_date = self.request.GET["end_date"]
+            if not end_date:
+                end_date = start_date
+            rows = []
+            for agent_id in agents_ids:
+                row = {"start date": start_date, "end date": end_date}
+                agent_stats = stats.calculate_stats(start_date, end_date, agent_id)
+                row.update(agent_stats)
+                rows.append(row)
+            header = row.keys()
+            # TODO: howto format header? (eg. make all fields uppercase)
+            # header = [k.upper() for k in row.keys()]
+            return exporter.export_csv(header, rows)
+        return super().get(request, *args, **kwargs)
 
 
 class StatsFilterView(OrganisorAndLoginRequiredMixin, generic.FormView):
