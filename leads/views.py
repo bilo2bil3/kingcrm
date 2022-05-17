@@ -14,10 +14,10 @@ from django.urls import reverse_lazy
 from agents.mixins import OrganisorAndLoginRequiredMixin
 from .models import Lead, Agent, Category, FollowUp, LeadsSheet, Tag
 from .forms import (
-    LeadForm, 
-    LeadModelForm, 
-    CustomUserCreationForm, 
-    AssignAgentForm, 
+    LeadForm,
+    LeadModelForm,
+    CustomUserCreationForm,
+    AssignAgentForm,
     LeadCategoryUpdateForm,
     CategoryModelForm,
     FollowUpModelForm,
@@ -26,18 +26,14 @@ from .forms import (
     SearchLeadsForm,
     LeadsSheetForm,
 )
+from . import forms
 from csv import DictReader
 import io
-from urllib.parse import (
-    urlparse,
-    urlencode,
-    urlunparse,
-    parse_qsl,
-    parse_qs
-)
+from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl, parse_qs
 import json
 import csv
 import requests
+from . import stats
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +41,7 @@ logger = logging.getLogger(__name__)
 import environ
 
 env = environ.Env()
-READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+READ_DOT_ENV_FILE = env.bool("READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
     environ.Env.read_env()
 
@@ -84,25 +80,26 @@ class DashboardView(OrganisorAndLoginRequiredMixin, generic.TemplateView):
         # How many new leads in the last 30 days
         thirty_days_ago = datetime.date.today() - datetime.timedelta(days=30)
 
-        total_in_past30 = Lead.objects.filter(
-            organisation=user.userprofile,
-            date_added__gte=thirty_days_ago
-        ).count()
+        # total_in_past30 = Lead.objects.filter(
+        #     organisation=user.userprofile, date_added__gte=thirty_days_ago
+        # ).count()
 
         # How many converted leads in the last 30 days
         # TODO: fix this
-        converted_category = Category.objects.get(name="Converted")
-        converted_in_past30 = Lead.objects.filter(
-            organisation=user.userprofile,
-            category=converted_category,
-            converted_date__gte=thirty_days_ago
-        ).count()
+        # converted_category = Category.objects.get(name="Converted")
+        # converted_in_past30 = Lead.objects.filter(
+        #     organisation=user.userprofile,
+        #     category=converted_category,
+        #     converted_date__gte=thirty_days_ago,
+        # ).count()
 
-        context.update({
-            "total_lead_count": total_lead_count,
-            "total_in_past30": total_in_past30,
-            "converted_in_past30": converted_in_past30
-        })
+        context.update(
+            {
+                "total_lead_count": total_lead_count,
+                # "total_in_past30": total_in_past30,
+                # "converted_in_past30": converted_in_past30,
+            }
+        )
         return context
 
 
@@ -119,22 +116,50 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
     # to handle both cases of:
     # generate leads csv or view leads
     def get(self, request, *args, **kwargs):
-        if 'export=1' in request.get_full_path():
-            response = HttpResponse(content_type='text/csv',)
-            response['Content-Disposition'] = 'attachment; filename="exported-leads.csv"'
+        if "export=1" in request.get_full_path():
+            response = HttpResponse(
+                content_type="text/csv",
+            )
+            response[
+                "Content-Disposition"
+            ] = 'attachment; filename="exported-leads.csv"'
             writer = csv.writer(response)
             qs = self.get_queryset()
-            writer.writerow([
-                'FIRST NAME', 'LAST NAME', 'SOURCE', 'SERVICE', 'EMAIL', 'CELL PHONE NUMBER',
-                'COUNTRY', 'CAMPAIGN', 'AGENT', 'CATEGORY', 'DATE'
-            ])
+            writer.writerow(
+                [
+                    "FIRST NAME",
+                    "LAST NAME",
+                    "SOURCE",
+                    "SERVICE",
+                    "EMAIL",
+                    "CELL PHONE NUMBER",
+                    "COUNTRY",
+                    "CAMPAIGN",
+                    "AGENT",
+                    "CATEGORY",
+                    "DATE",
+                ]
+            )
             for lead in qs:
-                writer.writerow([
-                    lead.first_name, lead.last_name, lead.source, lead.service,
-                    lead.email, lead.phone_number, lead.country,
-                    lead.campaign, (f'{lead.agent.user.first_name} {lead.agent.user.last_name}' if lead.agent else 'Unassigned'),
-                    (lead.category.name if lead.category else 'New'), lead.date_added.date()
-                ])
+                writer.writerow(
+                    [
+                        lead.first_name,
+                        lead.last_name,
+                        lead.source,
+                        lead.service,
+                        lead.email,
+                        lead.phone_number,
+                        lead.country,
+                        lead.campaign,
+                        (
+                            f"{lead.agent.user.first_name} {lead.agent.user.last_name}"
+                            if lead.agent
+                            else "Unassigned"
+                        ),
+                        (lead.category.name if lead.category else "New"),
+                        lead.date_added.date(),
+                    ]
+                )
             return response
         else:
             return super().get(request, *args, **kwargs)
@@ -144,12 +169,12 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         # initial queryset of leads for the entire organisation
         if user.is_organisor:
             queryset = Lead.objects.filter(
-                organisation=user.userprofile, 
+                organisation=user.userprofile,
                 # agent__isnull=False
             )
         else:
             queryset = Lead.objects.filter(
-                organisation=user.agent.organisation, 
+                organisation=user.agent.organisation,
                 # agent__isnull=False
             )
             # filter for the agent that is logged in
@@ -157,40 +182,43 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
 
         # print('###', self.request.GET)
         # if self.request.GET.get('first_name'):
-        if '?' in self.request.get_full_path() and 'first_name' in self.request.get_full_path():
-            first_name = self.request.GET['first_name']
-            last_name = self.request.GET['last_name']
-            email = self.request.GET['email']
-            phone_number = self.request.GET['phone_number']
+        if (
+            "?" in self.request.get_full_path()
+            and "first_name" in self.request.get_full_path()
+        ):
+            first_name = self.request.GET["first_name"]
+            last_name = self.request.GET["last_name"]
+            email = self.request.GET["email"]
+            phone_number = self.request.GET["phone_number"]
             first_name_q = Q(first_name__icontains=first_name)
             last_name_q = Q(last_name__icontains=last_name)
             email_q = Q(email__startswith=email)
             phone_number_q = Q(phone_number__icontains=phone_number)
 
-            sources = self.request.GET.getlist('source')
-            services = self.request.GET.getlist('service')
-            countries = self.request.GET.getlist('country')
-            campaigns = self.request.GET.getlist('campaign')
-            agents = self.request.GET.getlist('agent')
-            categories = self.request.GET.getlist('category')
-            tags = self.request.GET.getlist('tag')
+            sources = self.request.GET.getlist("source")
+            services = self.request.GET.getlist("service")
+            countries = self.request.GET.getlist("country")
+            campaigns = self.request.GET.getlist("campaign")
+            agents = self.request.GET.getlist("agent")
+            categories = self.request.GET.getlist("category")
+            tags = self.request.GET.getlist("tag")
             # charfields fileters
             # either membership filter (to include selected only)
             # or starts with empty str filter (to include all)
             if not sources:
-                sources_q = Q(source__startswith='')
+                sources_q = Q(source__startswith="")
             else:
                 sources_q = Q(source__in=sources)
             if not services:
-                services_q = Q(service__startswith='')
+                services_q = Q(service__startswith="")
             else:
                 services_q = Q(service__in=services)
             if not countries:
-                countries_q = Q(country__startswith='')
+                countries_q = Q(country__startswith="")
             else:
                 countries_q = Q(country__in=countries)
             if not campaigns:
-                campaigns_q = Q(campaign__startswith='')
+                campaigns_q = Q(campaign__startswith="")
             else:
                 campaigns_q = Q(campaign__in=campaigns)
 
@@ -216,79 +244,85 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             # datetime filters
             # either in specific range
             # or from specific date till today
-            start_date = self.request.GET['start_date']
-            end_date = self.request.GET['end_date']
+            start_date = self.request.GET["start_date"]
+            end_date = self.request.GET["end_date"]
             if start_date and end_date:
-                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+                start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
                 queryset = queryset.filter(
-                    date_added__gte=start_date,
-                    date_added__lte=end_date
+                    date_added__gte=start_date, date_added__lte=end_date
                 )
             elif start_date:
-                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 queryset = queryset.filter(date_added__date=start_date)
 
         # sorting
-        ordering = self.request.GET.get('order_by', None)
+        ordering = self.request.GET.get("order_by", None)
         if ordering is None:
             # add default ordering
-            ordering = '-date_added'
-        if ordering == 'country_desc':
-            ordering = '-country'
-        elif ordering == 'country_asc':
-            ordering = 'country'
-        elif ordering == 'campaign_desc':
-            ordering = '-campaign'
-        elif ordering == 'campaign_asc':
-            ordering = 'campaign'
-        elif ordering == 'agent_desc':
-            ordering = '-agent__user__first_name'
-        elif ordering == 'agent_asc':
-            ordering = 'agent__user__first_name'
-        elif ordering == 'category_desc':
-            ordering = '-category__name'
-        elif ordering == 'category_asc':
-            ordering = 'category__name'
-        elif ordering == 'date_desc':
-            ordering = '-date_added'
-        elif ordering == 'date_asc':
-            ordering = 'date_added'
+            ordering = "-date_added"
+        if ordering == "country_desc":
+            ordering = "-country"
+        elif ordering == "country_asc":
+            ordering = "country"
+        elif ordering == "campaign_desc":
+            ordering = "-campaign"
+        elif ordering == "campaign_asc":
+            ordering = "campaign"
+        elif ordering == "agent_desc":
+            ordering = "-agent__user__first_name"
+        elif ordering == "agent_asc":
+            ordering = "agent__user__first_name"
+        elif ordering == "category_desc":
+            ordering = "-category__name"
+        elif ordering == "category_asc":
+            ordering = "category__name"
+        elif ordering == "date_desc":
+            ordering = "-date_added"
+        elif ordering == "date_asc":
+            ordering = "date_added"
         return queryset.order_by(ordering)
-    
+
     def get_context_data(self, **kwargs):
         context = super(LeadListView, self).get_context_data(**kwargs)
         # control sorting flags
         url = self.request.get_full_path()
-        for field in ['country', 'campaign', 'agent', 'category', 'date']:
-            params1 = {f'order_by': f'{field}_asc'}
-            params2 = {f'order_by': f'{field}_desc'}
+        for field in ["country", "campaign", "agent", "category", "date"]:
+            params1 = {f"order_by": f"{field}_asc"}
+            params2 = {f"order_by": f"{field}_desc"}
             url_asc = add_query_string(url, params1)
             url_desc = add_query_string(url, params2)
-            context.update({f'{field}_url_asc': url_asc, f'{field}_url_desc': url_desc})
+            context.update({f"{field}_url_asc": url_asc, f"{field}_url_desc": url_desc})
 
         # add pagination links
-        page_obj = context['page_obj']
+        page_obj = context["page_obj"]
         if page_obj.has_previous():
-            first_page = add_query_string(url, {'page': 1})
-            previous_page = add_query_string(url, {'page': page_obj.previous_page_number()})
-            context.update({'first_page_url': first_page, 'previous_page_url': previous_page})
+            first_page = add_query_string(url, {"page": 1})
+            previous_page = add_query_string(
+                url, {"page": page_obj.previous_page_number()}
+            )
+            context.update(
+                {"first_page_url": first_page, "previous_page_url": previous_page}
+            )
         if page_obj.has_next():
-            next_page = add_query_string(url, {'page': page_obj.next_page_number()})
-            last_page = add_query_string(url, {'page': page_obj.paginator.num_pages})
-            context.update({'next_page_url': next_page, 'last_page_url': last_page})
+            next_page = add_query_string(url, {"page": page_obj.next_page_number()})
+            last_page = add_query_string(url, {"page": page_obj.paginator.num_pages})
+            context.update({"next_page_url": next_page, "last_page_url": last_page})
         ten_pages = []
-        for i in range(max(1, page_obj.number - 5), min(page_obj.number + 5, page_obj.paginator.num_pages) + 1):
-            ten_pages.append({i: add_query_string(url, {'page': i})})
-        context.update({'ten_pages': ten_pages})
+        for i in range(
+            max(1, page_obj.number - 5),
+            min(page_obj.number + 5, page_obj.paginator.num_pages) + 1,
+        ):
+            ten_pages.append({i: add_query_string(url, {"page": i})})
+        context.update({"ten_pages": ten_pages})
 
         # add export link
-        export_link = add_query_string(url, {'export': 1})
-        context.update({'export_link': export_link})
+        export_link = add_query_string(url, {"export": 1})
+        context.update({"export_link": export_link})
 
         # to assign leads from lead_list view
         # we need show all agents
-        context.update({'agents': Agent.objects.all()})
+        context.update({"agents": Agent.objects.all()})
         # user = self.request.user
         # if user.is_organisor:
         #     queryset = Lead.objects.filter(
@@ -303,9 +337,7 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
 
 def lead_list(request):
     leads = Lead.objects.all()
-    context = {
-        "leads": leads
-    }
+    context = {"leads": leads}
     return render(request, "leads/lead_list.html", context)
 
 
@@ -327,9 +359,7 @@ class LeadDetailView(LoginRequiredMixin, generic.DetailView):
 
 def lead_detail(request, pk):
     lead = Lead.objects.get(id=pk)
-    context = {
-        "lead": lead
-    }
+    context = {"lead": lead}
     return render(request, "leads/lead_detail.html", context)
 
 
@@ -348,7 +378,7 @@ class LeadCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
             subject="A lead has been created",
             message="Go to the site to see the new lead",
             from_email="test@test.com",
-            recipient_list=["test2@test.com"]
+            recipient_list=["test2@test.com"],
         )
         messages.success(self.request, "You have successfully created a lead")
         return super(LeadCreateView, self).form_valid(form)
@@ -361,9 +391,7 @@ def lead_create(request):
         if form.is_valid():
             form.save()
             return redirect("/leads")
-    context = {
-        "form": form
-    }
+    context = {"form": form}
     return render(request, "leads/lead_create.html", context)
 
 
@@ -393,10 +421,7 @@ def lead_update(request, pk):
         if form.is_valid():
             form.save()
             return redirect("/leads")
-    context = {
-        "form": form,
-        "lead": lead
-    }
+    context = {"form": form, "lead": lead}
     return render(request, "leads/lead_update.html", context)
 
 
@@ -424,11 +449,9 @@ class AssignAgentView(OrganisorAndLoginRequiredMixin, generic.FormView):
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super(AssignAgentView, self).get_form_kwargs(**kwargs)
-        kwargs.update({
-            "request": self.request
-        })
+        kwargs.update({"request": self.request})
         return kwargs
-        
+
     def get_success_url(self):
         return reverse("leads:lead-list")
 
@@ -449,30 +472,22 @@ class CategoryListView(LoginRequiredMixin, generic.ListView):
         user = self.request.user
 
         if user.is_organisor:
-            queryset = Lead.objects.filter(
-                organisation=user.userprofile
-            )
+            queryset = Lead.objects.filter(organisation=user.userprofile)
         else:
-            queryset = Lead.objects.filter(
-                organisation=user.agent.organisation
-            )
+            queryset = Lead.objects.filter(organisation=user.agent.organisation)
 
-        context.update({
-            "unassigned_lead_count": queryset.filter(category__isnull=True).count()
-        })
+        context.update(
+            {"unassigned_lead_count": queryset.filter(category__isnull=True).count()}
+        )
         return context
 
     def get_queryset(self):
         user = self.request.user
         # initial queryset of leads for the entire organisation
         if user.is_organisor:
-            queryset = Category.objects.filter(
-                organisation=user.userprofile
-            )
+            queryset = Category.objects.filter(organisation=user.userprofile)
         else:
-            queryset = Category.objects.filter(
-                organisation=user.agent.organisation
-            )
+            queryset = Category.objects.filter(organisation=user.agent.organisation)
         return queryset
 
 
@@ -484,13 +499,9 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
         user = self.request.user
         # initial queryset of leads for the entire organisation
         if user.is_organisor:
-            queryset = Category.objects.filter(
-                organisation=user.userprofile
-            )
+            queryset = Category.objects.filter(organisation=user.userprofile)
         else:
-            queryset = Category.objects.filter(
-                organisation=user.agent.organisation
-            )
+            queryset = Category.objects.filter(organisation=user.agent.organisation)
         return queryset
 
 
@@ -519,13 +530,9 @@ class CategoryUpdateView(OrganisorAndLoginRequiredMixin, generic.UpdateView):
         user = self.request.user
         # initial queryset of leads for the entire organisation
         if user.is_organisor:
-            queryset = Category.objects.filter(
-                organisation=user.userprofile
-            )
+            queryset = Category.objects.filter(organisation=user.userprofile)
         else:
-            queryset = Category.objects.filter(
-                organisation=user.agent.organisation
-            )
+            queryset = Category.objects.filter(organisation=user.agent.organisation)
         return queryset
 
 
@@ -539,13 +546,9 @@ class CategoryDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
         user = self.request.user
         # initial queryset of leads for the entire organisation
         if user.is_organisor:
-            queryset = Category.objects.filter(
-                organisation=user.userprofile
-            )
+            queryset = Category.objects.filter(organisation=user.userprofile)
         else:
-            queryset = Category.objects.filter(
-                organisation=user.agent.organisation
-            )
+            queryset = Category.objects.filter(organisation=user.agent.organisation)
         return queryset
 
 
@@ -589,9 +592,7 @@ class FollowUpCreateView(LoginRequiredMixin, generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(FollowUpCreateView, self).get_context_data(**kwargs)
-        context.update({
-            "lead": Lead.objects.get(pk=self.kwargs["pk"])
-        })
+        context.update({"lead": Lead.objects.get(pk=self.kwargs["pk"])})
         return context
 
     def form_valid(self, form):
@@ -612,7 +613,9 @@ class FollowUpUpdateView(LoginRequiredMixin, generic.UpdateView):
         if user.is_organisor:
             queryset = FollowUp.objects.filter(lead__organisation=user.userprofile)
         else:
-            queryset = FollowUp.objects.filter(lead__organisation=user.agent.organisation)
+            queryset = FollowUp.objects.filter(
+                lead__organisation=user.agent.organisation
+            )
             # filter for the agent that is logged in
             queryset = queryset.filter(lead__agent__user=user)
         return queryset
@@ -634,11 +637,12 @@ class FollowUpDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
         if user.is_organisor:
             queryset = FollowUp.objects.filter(lead__organisation=user.userprofile)
         else:
-            queryset = FollowUp.objects.filter(lead__organisation=user.agent.organisation)
+            queryset = FollowUp.objects.filter(
+                lead__organisation=user.agent.organisation
+            )
             # filter for the agent that is logged in
             queryset = queryset.filter(lead__agent__user=user)
         return queryset
-
 
 
 # def lead_update(request, pk):
@@ -655,48 +659,45 @@ class FollowUpDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
 #             lead.age = age
 #             lead.save()
 #             return redirect("/leads")
-    # context = {
-    #     "form": form,
-    #     "lead": lead
-    # }
+# context = {
+#     "form": form,
+#     "lead": lead
+# }
 #     return render(request, "leads/lead_update.html", context)
 
 
 # def lead_create(request):
-    # form = LeadForm()
-    # if request.method == "POST":
-    #     form = LeadForm(request.POST)
-    #     if form.is_valid():
-    #         first_name = form.cleaned_data['first_name']
-    #         last_name = form.cleaned_data['last_name']
-    #         age = form.cleaned_data['age']
-    #         agent = Agent.objects.first()
-    #         Lead.objects.create(
-    #             first_name=first_name,
-    #             last_name=last_name,
-    #             age=age,
-    #             agent=agent
-    #         )
-    #         return redirect("/leads")
-    # context = {
-    #     "form": form
-    # }
+# form = LeadForm()
+# if request.method == "POST":
+#     form = LeadForm(request.POST)
+#     if form.is_valid():
+#         first_name = form.cleaned_data['first_name']
+#         last_name = form.cleaned_data['last_name']
+#         age = form.cleaned_data['age']
+#         agent = Agent.objects.first()
+#         Lead.objects.create(
+#             first_name=first_name,
+#             last_name=last_name,
+#             age=age,
+#             agent=agent
+#         )
+#         return redirect("/leads")
+# context = {
+#     "form": form
+# }
 #     return render(request, "leads/lead_create.html", context)
 
 
 class LeadJsonView(generic.View):
-
     def get(self, request, *args, **kwargs):
-        
-        qs = list(Lead.objects.all().values(
-            "first_name", 
-            "last_name", 
-            "age")
-        )
 
-        return JsonResponse({
-            "qs": qs,
-        })
+        qs = list(Lead.objects.all().values("first_name", "last_name", "age"))
+
+        return JsonResponse(
+            {
+                "qs": qs,
+            }
+        )
 
 
 ### upload leads using csv file ###
@@ -706,11 +707,14 @@ def partition_leads(leads, agents_count):
     # we need to slice leads into N equal groups
     # where N is number of agents
     k, m = divmod(len(leads), agents_count)
-    return [leads[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(agents_count)]
+    return [
+        leads[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
+        for i in range(agents_count)
+    ]
 
 
 def add_leads_and_assign_random_agent(request, f):
-    f = io.StringIO(f.read().decode('utf-8'))
+    f = io.StringIO(f.read().decode("utf-8"))
     csv_reader = DictReader(f)
 
     # to skip duplicate leads while uploading
@@ -718,7 +722,7 @@ def add_leads_and_assign_random_agent(request, f):
     leads_to_add = []
     for row in csv_reader:
         print(row)
-        if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
+        if row["phone_number"] in [lead["phone_number"] for lead in leads_to_add]:
             continue
         leads_to_add.append(row)
 
@@ -730,18 +734,18 @@ def add_leads_and_assign_random_agent(request, f):
     for i, agent in enumerate(agents):
         leads_per_agent = parts[i]
         for lead in leads_per_agent:
-            first_name = lead['first_name']
-            last_name = lead['last_name']
-            source = lead['source']
-            service = lead['service']
-            email = lead['email']
-            phone_number = lead['phone_number']
-            country = lead['country']
-            campaign = lead['campaign']
+            first_name = lead["first_name"]
+            last_name = lead["last_name"]
+            source = lead["source"]
+            service = lead["service"]
+            email = lead["email"]
+            phone_number = lead["phone_number"]
+            country = lead["country"]
+            campaign = lead["campaign"]
 
             # skip duplicate leads
             # if new lead exist in db
-            if phone_number in Lead.objects.values_list('phone_number', flat=True):
+            if phone_number in Lead.objects.values_list("phone_number", flat=True):
                 continue
 
             Lead.objects.create(
@@ -754,35 +758,35 @@ def add_leads_and_assign_random_agent(request, f):
                 phone_number=phone_number,
                 country=country,
                 campaign=campaign,
-                agent=agent
+                agent=agent,
             )
 
 
 def add_leads_and_assign_selected_agent(request, f, agent):
-    f = io.StringIO(f.read().decode('utf-8'))
+    f = io.StringIO(f.read().decode("utf-8"))
     csv_reader = DictReader(f)
 
     # to skip duplicate leads while uploading
     # we need to keep track of leads added for current session
     leads_to_add = []
     for row in csv_reader:
-        if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
+        if row["phone_number"] in [lead["phone_number"] for lead in leads_to_add]:
             continue
         leads_to_add.append(row)
 
     for lead in leads_to_add:
-        first_name = lead['first_name']
-        last_name = lead['last_name']
-        source = lead['source']
-        service = lead['service']
-        email = lead['email']
-        phone_number = lead['phone_number']
-        country = lead['country']
-        campaign = lead['campaign']
+        first_name = lead["first_name"]
+        last_name = lead["last_name"]
+        source = lead["source"]
+        service = lead["service"]
+        email = lead["email"]
+        phone_number = lead["phone_number"]
+        country = lead["country"]
+        campaign = lead["campaign"]
 
         # skip duplicate leads
         # if new lead exist in db
-        if phone_number in Lead.objects.values_list('phone_number', flat=True):
+        if phone_number in Lead.objects.values_list("phone_number", flat=True):
             continue
 
         Lead.objects.create(
@@ -800,30 +804,30 @@ def add_leads_and_assign_selected_agent(request, f, agent):
 
 
 def add_leads(request, f):
-    f = io.StringIO(f.read().decode('utf-8'))
+    f = io.StringIO(f.read().decode("utf-8"))
     csv_reader = DictReader(f)
 
     # to skip duplicate leads while uploading
     # we need to keep track of leads added for current session
     leads_to_add = []
     for row in csv_reader:
-        if row['phone_number'] in [lead['phone_number'] for lead in leads_to_add]:
+        if row["phone_number"] in [lead["phone_number"] for lead in leads_to_add]:
             continue
         leads_to_add.append(row)
 
     for lead in leads_to_add:
-        first_name = lead['first_name']
-        last_name = lead['last_name']
-        source = lead['source']
-        service = lead['service']
-        email = lead['email']
-        phone_number = lead['phone_number']
-        country = lead['country']
-        campaign = lead['campaign']
+        first_name = lead["first_name"]
+        last_name = lead["last_name"]
+        source = lead["source"]
+        service = lead["service"]
+        email = lead["email"]
+        phone_number = lead["phone_number"]
+        country = lead["country"]
+        campaign = lead["campaign"]
 
         # skip duplicate leads
         # if new lead exist in db
-        if phone_number in Lead.objects.values_list('phone_number', flat=True):
+        if phone_number in Lead.objects.values_list("phone_number", flat=True):
             continue
 
         Lead.objects.create(
@@ -835,7 +839,7 @@ def add_leads(request, f):
             email=email,
             phone_number=phone_number,
             country=country,
-            campaign=campaign
+            campaign=campaign,
         )
 
 
@@ -843,40 +847,43 @@ def upload_leads(request):
     if request.method == "POST":
         form = UploadLeadsForm(request.POST, request.FILES)
         if form.is_valid():
-            add_leads(request, request.FILES['leads_file'])
-            return redirect(reverse('leads:lead-list'))
+            add_leads(request, request.FILES["leads_file"])
+            return redirect(reverse("leads:lead-list"))
     else:
         form = UploadLeadsForm()
-    return render(request, 'leads/leads_upload.html', {'form': form})
+    return render(request, "leads/leads_upload.html", {"form": form})
 
 
 def upload_leads_with_random_agent(request):
     if request.method == "POST":
         form = UploadLeadsForm(request.POST, request.FILES)
         if form.is_valid():
-            add_leads_and_assign_random_agent(request, request.FILES['leads_file'])
-            return redirect(reverse('leads:lead-list'))
+            add_leads_and_assign_random_agent(request, request.FILES["leads_file"])
+            return redirect(reverse("leads:lead-list"))
     else:
         form = UploadLeadsForm()
-    return render(request, 'leads/leads_upload_random.html', {'form': form})
+    return render(request, "leads/leads_upload_random.html", {"form": form})
 
 
 def upload_leads_with_selected_agent(request):
     if request.method == "POST":
         form = UploadLeadsWithAgentForm(request.POST, request.FILES)
         if form.is_valid():
-            add_leads_and_assign_selected_agent(request, request.FILES['leads_file'], form.cleaned_data['agent'])
-            return redirect(reverse('leads:lead-list'))
+            add_leads_and_assign_selected_agent(
+                request, request.FILES["leads_file"], form.cleaned_data["agent"]
+            )
+            return redirect(reverse("leads:lead-list"))
     else:
         form = UploadLeadsWithAgentForm()
-    return render(request, 'leads/leads_upload_selected.html', {'form': form})
+    return render(request, "leads/leads_upload_selected.html", {"form": form})
 
 
 ### search leads ###
 class LeadSearchView(generic.edit.FormView):
-    template_name = 'leads/lead_search.html'
+    template_name = "leads/lead_search.html"
     form_class = SearchLeadsForm
     # success_url = reverse_lazy('leads:lead-list')
+
 
 def add_query_string(url, params):
     url_parts = list(urlparse(url))
@@ -892,27 +899,29 @@ def add_query_string(url, params):
     url_parts[4] = urlencode(qs_parts)
     return urlunparse(url_parts)
 
+
 @login_required
 def delete_selected_leads(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         # print('####handling delete selected leads')
         payload = json.loads(request.body)
-        url = payload['url']
+        url = payload["url"]
         # print('###current url', url)
-        leads_to_delete = list(map(int, payload['leads']))
+        leads_to_delete = list(map(int, payload["leads"]))
         # print('###', leads_to_delete)
         qs = Lead.objects.filter(pk__in=leads_to_delete)
         # print('###', qs)
         qs.delete()
         return HttpResponseRedirect(url)
 
+
 @login_required
 def assign_selected_leads(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         payload = json.loads(request.body)
-        url = payload['url']
-        agent_ids = payload['agents']
-        leads_to_assign = list(map(int, payload['leads']))
+        url = payload["url"]
+        agent_ids = payload["agents"]
+        leads_to_assign = list(map(int, payload["leads"]))
 
         # qs = Lead.objects.filter(pk__in=leads_to_assign)
         # qs.update(agent=agent_id)
@@ -926,12 +935,13 @@ def assign_selected_leads(request):
                 Lead.objects.filter(pk=lead_id).update(agent=agent)
         return HttpResponseRedirect(url)
 
+
 @login_required
 def assign_selected_leads_randomly(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         payload = json.loads(request.body)
-        url = payload['url']
-        leads_to_assign = list(map(int, payload['leads']))
+        url = payload["url"]
+        leads_to_assign = list(map(int, payload["leads"]))
 
         agents = Agent.objects.all()
         agents_count = Agent.objects.count()
@@ -945,67 +955,100 @@ def assign_selected_leads_randomly(request):
 
 @login_required
 def click_to_call(request):
-    if request.method == 'POST':
-        CALL_ENDPOINT = env('CLICK2CALL_CALL_ENDPOINT')
-        AGENT_NUMBER = env('CLICK2CALL_AGENT_NUMBER')
+    if request.method == "POST":
+        CALL_ENDPOINT = env("CLICK2CALL_CALL_ENDPOINT")
+        AGENT_NUMBER = env("CLICK2CALL_AGENT_NUMBER")
         payload = json.loads(request.body)
-        lead_id = payload['lead']
-        client_number = Lead.objects.get(pk=lead_id).phone_number
-        print(f'###click2call: calling {client_number}')
+        lead_id = payload["lead"]
+        lead = Lead.objects.get(pk=lead_id)
+        client_number = lead.phone_number
+        print(f"###click2call: calling {client_number}")
         try:
             r = requests.post(
-                CALL_ENDPOINT,
-                data={'agent': AGENT_NUMBER, 'phone_num': client_number}
+                CALL_ENDPOINT, data={"agent": AGENT_NUMBER, "phone_num": client_number}
             )
-            return HttpResponse('')
+            lead.last_called = datetime.datetime.now()
+            lead.save()
+            return HttpResponse("")
         except Exception as e:
             return HttpResponse(str(e))
+
 
 @login_required
 def hangup_call(request):
-    if request.method == 'POST':
-        print('###click2call: disconneting')
-        HANGUP_ENDPOINT = env('CLICK2CALL_HANGUP_ENDPOINT')
-        AGENT_NUMBER = env('CLICK2CALL_AGENT_NUMBER')
+    if request.method == "POST":
+        print("###click2call: disconneting")
+        HANGUP_ENDPOINT = env("CLICK2CALL_HANGUP_ENDPOINT")
+        AGENT_NUMBER = env("CLICK2CALL_AGENT_NUMBER")
         try:
-            r = requests.post(
-                HANGUP_ENDPOINT,
-                data={'agent': AGENT_NUMBER}
-            )
-            return HttpResponse('')
+            r = requests.post(HANGUP_ENDPOINT, data={"agent": AGENT_NUMBER})
+            return HttpResponse("")
         except Exception as e:
             return HttpResponse(str(e))
 
+
 class SheetCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
     form_class = LeadsSheetForm
-    template_name = 'leads/add-sheet.html'
+    template_name = "leads/add-sheet.html"
     # success_url = reverse_lazy('leads:lead-list')
-    success_url = reverse_lazy('leads:add-sheet')
+    success_url = reverse_lazy("leads:add-sheet")
 
     def form_valid(self, form):
         form.instance.organisation = self.request.user.userprofile
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
-        kwargs['sheets'] = LeadsSheet.objects.all()
+        kwargs["sheets"] = LeadsSheet.objects.all()
         return super().get_context_data(**kwargs)
+
 
 class SheetDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
     model = LeadsSheet
-    success_url = reverse_lazy('leads:add-sheet')
-    template_name = 'leads/delete-sheet.html'
+    success_url = reverse_lazy("leads:add-sheet")
+    template_name = "leads/delete-sheet.html"
+
 
 class TagCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
     model = Tag
-    fields = ('name',)
-    template_name = 'leads/add-tag.html'
-    success_url = reverse_lazy('leads:add-tag')
+    fields = ("name",)
+    template_name = "leads/add-tag.html"
+    success_url = reverse_lazy("leads:add-tag")
 
     def get_context_data(self, **kwargs):
-        kwargs['tags'] = Tag.objects.all()
+        kwargs["tags"] = Tag.objects.all()
         return super().get_context_data(**kwargs)
+
 
 class TagDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
     model = Tag
-    success_url = reverse_lazy('leads:add-tag')
-    template_name = 'leads/delete-tag.html'
+    success_url = reverse_lazy("leads:add-tag")
+    template_name = "leads/delete-tag.html"
+
+
+class StatsListView(OrganisorAndLoginRequiredMixin, generic.ListView):
+    template_name: str = "leads/stats_list.html"
+
+    def get_queryset(self):
+        pass
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        agents_ids = self.request.GET.getlist("agent")
+        data = []
+        for agent_id in agents_ids:
+            start_date = self.request.GET["start_date"]
+            end_date = self.request.GET["end_date"]
+            data.append(stats.calculate_stats(start_date, end_date, agent_id))
+        context.update(
+            {
+                "data": data,
+                "start_date": start_date,
+                "end_date": end_date,
+            }
+        )
+        return context
+
+
+class StatsFilterView(OrganisorAndLoginRequiredMixin, generic.FormView):
+    form_class = forms.StatsFilterForm
+    template_name = "leads/stats_filter.html"

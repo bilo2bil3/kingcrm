@@ -23,21 +23,32 @@ class LeadManager(models.Manager):
 class Lead(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
-    source = models.CharField(max_length=64, default='')
-    service = models.CharField(max_length=64, default='')
+    source = models.CharField(max_length=64, default="")
+    service = models.CharField(max_length=64, default="")
     age = models.IntegerField(default=0)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    agent = models.ForeignKey("Agent", null=True, blank=True, on_delete=models.SET_NULL)
-    category = models.ForeignKey("Category", related_name="leads", null=True, blank=True, on_delete=models.SET_NULL)
+    agent = models.ForeignKey(
+        "Agent", null=True, blank=True, on_delete=models.SET_NULL, related_name="leads"
+    )
+    category = models.ForeignKey(
+        "Category",
+        related_name="leads",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
     description = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
-    profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
+    profile_picture = models.ImageField(
+        null=True, blank=True, upload_to="profile_pictures/"
+    )
     converted_date = models.DateTimeField(null=True, blank=True)
-    country = models.CharField(max_length=64, default='')
-    campaign = models.CharField(max_length=64, default='')
-    tags = models.ManyToManyField('Tag', related_name='leads')
+    country = models.CharField(max_length=64, default="")
+    campaign = models.CharField(max_length=64, default="")
+    tags = models.ManyToManyField("Tag", related_name="leads", blank=True)
+    last_called = models.DateTimeField(blank=True, null=True)
 
     objects = LeadManager()
 

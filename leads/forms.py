@@ -14,23 +14,31 @@ class LeadModelForm(forms.ModelForm):
         # should only appear when updating an existing lead
         # not when creating a new lead
         if self.instance.pk is not None:
-            self.fields['remove tags'] = forms.MultipleChoiceField(choices=self.get_existing_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-            self.fields['add tags'] = forms.MultipleChoiceField(choices=self.get_new_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+            self.fields["remove tags"] = forms.MultipleChoiceField(
+                choices=self.get_existing_tags(),
+                required=False,
+                widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+            )
+            self.fields["add tags"] = forms.MultipleChoiceField(
+                choices=self.get_new_tags(),
+                required=False,
+                widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+            )
 
     class Meta:
         model = Lead
         fields = (
-            'first_name',
-            'last_name',
-            'source',
-            'service',
-            'agent',
-            'description',
-            'phone_number',
-            'country',
-            'campaign',
-            'email',
-            'profile_picture'
+            "first_name",
+            "last_name",
+            "source",
+            "service",
+            "agent",
+            "description",
+            "phone_number",
+            "country",
+            "campaign",
+            "email",
+            "profile_picture",
         )
 
     def clean_first_name(self):
@@ -47,15 +55,17 @@ class LeadModelForm(forms.ModelForm):
         #     raise ValidationError("Your name is not Joe Soap")
 
     def get_existing_tags(self):
-        return [('', '------')] + [(tag.pk, tag) for tag in self.instance.tags.all()]
+        return [("", "------")] + [(tag.pk, tag) for tag in self.instance.tags.all()]
 
     def get_new_tags(self):
-        return [('', '------')] + [(tag.pk, tag) for tag in Tag.objects.exclude(leads__pk=self.instance.pk)]
+        return [("", "------")] + [
+            (tag.pk, tag) for tag in Tag.objects.exclude(leads__pk=self.instance.pk)
+        ]
 
     def save(self, *args, **kwargs):
         try:
-            tags_to_add = self.cleaned_data.pop('add tags')
-            tags_to_remove = self.cleaned_data.pop('remove tags')
+            tags_to_add = self.cleaned_data.pop("add tags")
+            tags_to_remove = self.cleaned_data.pop("remove tags")
         except KeyError:
             pass
         else:
@@ -76,7 +86,7 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username",)
-        field_classes = {'username': UsernameField}
+        field_classes = {"username": UsernameField}
 
 
 class AssignAgentForm(forms.Form):
@@ -92,26 +102,19 @@ class AssignAgentForm(forms.Form):
 class LeadCategoryUpdateForm(forms.ModelForm):
     class Meta:
         model = Lead
-        fields = (
-            'category',
-        )
+        fields = ("category",)
 
 
 class CategoryModelForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = (
-            'name',
-        )
+        fields = ("name",)
 
 
 class FollowUpModelForm(forms.ModelForm):
     class Meta:
         model = FollowUp
-        fields = (
-            'notes',
-            'file'
-        )
+        fields = ("notes", "file")
 
 
 class UploadLeadsForm(forms.Form):
@@ -128,20 +131,48 @@ class UploadLeadsWithAgentForm(forms.Form):
 
 
 class DateInput(forms.DateInput):
-    input_type = 'date'
+    input_type = "date"
 
 
 ### search leads ###
 class SearchLeadsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['source'] = forms.MultipleChoiceField(choices=self.get_choices('source'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['service'] = forms.MultipleChoiceField(choices=self.get_choices('service'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['country'] = forms.MultipleChoiceField(choices=self.get_choices('country'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['agent'] = forms.MultipleChoiceField(choices=self.get_agents(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['campaign'] = forms.MultipleChoiceField(choices=self.get_choices('campaign'), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['category'] = forms.MultipleChoiceField(choices=self.get_catgs(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
-        self.fields['tag'] = forms.MultipleChoiceField(choices=self.get_tags(), required=False, widget=forms.SelectMultiple(attrs={'multiple': 'multiple'}))
+        self.fields["source"] = forms.MultipleChoiceField(
+            choices=self.get_choices("source"),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
+        self.fields["service"] = forms.MultipleChoiceField(
+            choices=self.get_choices("service"),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
+        self.fields["country"] = forms.MultipleChoiceField(
+            choices=self.get_choices("country"),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
+        self.fields["agent"] = forms.MultipleChoiceField(
+            choices=self.get_agents(),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
+        self.fields["campaign"] = forms.MultipleChoiceField(
+            choices=self.get_choices("campaign"),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
+        self.fields["category"] = forms.MultipleChoiceField(
+            choices=self.get_catgs(),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
+        self.fields["tag"] = forms.MultipleChoiceField(
+            choices=self.get_tags(),
+            required=False,
+            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+        )
 
     # text input
     first_name = forms.CharField(required=False)
@@ -155,22 +186,54 @@ class SearchLeadsForm(forms.Form):
     # so should be included in __init__ method instead
 
     def get_choices(self, field_name):
-        return [('', '------')] + [(v,v) for v in Lead.objects.values_list(field_name, flat=True).distinct()]
+        return [("", "------")] + [
+            (v, v) for v in Lead.objects.values_list(field_name, flat=True).distinct()
+        ]
 
     def get_agents(self):
-        return [
-            ('', '------')] + [(agent.pk, f'{agent.user.first_name} {agent.user.last_name}')
+        return [("", "------")] + [
+            (agent.pk, f"{agent.user.first_name} {agent.user.last_name}")
             for agent in Agent.objects.all()
         ]
 
     def get_catgs(self):
-        return [('', '------')] + [(catg.pk, catg) for catg in Category.objects.all()]
+        return [("", "------")] + [(catg.pk, catg) for catg in Category.objects.all()]
 
     def get_tags(self):
-        return [('', '------')] + [(tag.pk, tag) for tag in Tag.objects.all()]
+        return [("", "------")] + [(tag.pk, tag) for tag in Tag.objects.all()]
+
 
 ### load from google sheets ###
 class LeadsSheetForm(forms.ModelForm):
     class Meta:
         model = LeadsSheet
-        fields = ('source', 'url', 'sheet_name')
+        fields = ("source", "url", "sheet_name")
+
+
+### agent stats/reports ###
+class AgentModelChoiceField(forms.ModelChoiceField):
+    """a custom ModelChoiceField that
+    shows agent's first and last name
+    as a label -for html option tag-
+    instead of default one (which is set to obj's __str__)."""
+
+    def label_from_instance(self, agent) -> str:
+        return f"{agent.user.first_name} {agent.user.last_name}"
+
+
+class StatsFilterForm(forms.Form):
+    """
+    to show agent stats during a specific period,
+    we need a form to select the agent, a start and an end date.
+    """
+
+    start_date = forms.DateField(
+        required=False, widget=DateInput(attrs={"required": "required"})
+    )
+    end_date = forms.DateField(required=False, widget=DateInput())
+    agent = AgentModelChoiceField(
+        queryset=Agent.objects.all(),
+        widget=forms.SelectMultiple(
+            attrs={"multiple": "multiple", "required": "required"}
+        ),
+    )
