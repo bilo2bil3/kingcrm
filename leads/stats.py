@@ -3,22 +3,10 @@ import datetime
 from .models import Agent
 
 
-def calculate_stats(start_date, end_date, agent_id):
+def calculate_stats(start_date, end_date, agent):
     """calculate leads stats for each agent in the specified time frame."""
-    agent = Agent.objects.get(pk=agent_id)
-    if start_date and end_date:
-        start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-        # should add 1 day period to end_date reach midnight
-        end_date_obj = datetime.datetime.strptime(
-            end_date, "%Y-%m-%d"
-        ) + datetime.timedelta(days=1)
-    elif start_date:
-        start_date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-        end_date_obj = start_date_obj + +datetime.timedelta(days=1)
-        end_date = start_date
-
     calls_made = agent.leads.filter(
-        last_called__gte=start_date_obj, last_called__lte=end_date_obj
+        last_called__date__gte=start_date, last_called__date__lte=end_date
     )
     # calls_made = agent.leads.filter(last_called__date=start_date)
     calls_count = calls_made.count()
@@ -54,8 +42,8 @@ def calculate_stats(start_date, end_date, agent_id):
         "agent": f"{agent.user.first_name} {agent.user.last_name}",
         "calls made": calls_count,
         "answered calls": answered_calls_count,
-        "conversion rate": f"{conversion_rate}%",
-        "interested rate": f"{interested_rate}%",
-        "lost rate": f"{lost_rate}%",
-        "not interested rate": f"{not_interested_rate}%",
+        "conversion rate": f"{int(conversion_rate)}%",
+        "interested rate": f"{int(interested_rate)}%",
+        "lost rate": f"{int(lost_rate)}%",
+        "not interested rate": f"{int(not_interested_rate)}%",
     }
