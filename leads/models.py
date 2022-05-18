@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     is_organisor = models.BooleanField(default=True)
     is_agent = models.BooleanField(default=False)
+    click2call_extension = models.CharField(max_length=3)
 
 
 class UserProfile(models.Model):

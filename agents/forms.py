@@ -6,18 +6,19 @@ User = get_user_model()
 
 
 class AgentModelForm(forms.ModelForm):
-    password=forms.CharField(widget=forms.PasswordInput())
-    confirm_password=forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput())
+    confirm_password = forms.CharField(widget=forms.PasswordInput())
 
     class Meta:
         model = User
         fields = (
-            'email',
-            'username',
-            'first_name',
-            'last_name',
-            'password',
-            'confirm_password'
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "password",
+            "confirm_password",
+            "click2call_extension",
         )
 
     def clean(self):
@@ -26,6 +27,4 @@ class AgentModelForm(forms.ModelForm):
         confirm_password = cleaned_data.get("confirm_password")
 
         if password != confirm_password:
-            raise forms.ValidationError(
-                "password and confirm_password does not match"
-            )
+            raise forms.ValidationError("password and confirm_password does not match")

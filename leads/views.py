@@ -921,15 +921,19 @@ def assign_selected_leads_randomly(request):
 def click_to_call(request):
     if request.method == "POST":
         CALL_ENDPOINT = env("CLICK2CALL_CALL_ENDPOINT")
-        AGENT_NUMBER = env("CLICK2CALL_AGENT_NUMBER")
         payload = json.loads(request.body)
         lead_id = payload["lead"]
         lead = Lead.objects.get(pk=lead_id)
+        agent_number = lead.agent.user.click2call_extension
         client_number = lead.phone_number
-        print(f"###click2call: calling {client_number}")
+        print(f"###click2call: {agent_number} calling {client_number}")
         try:
             r = requests.post(
-                CALL_ENDPOINT, data={"agent": AGENT_NUMBER, "phone_num": client_number}
+                CALL_ENDPOINT,
+                data={
+                    "agent": agent_number,
+                    "phone_num": client_number,
+                },
             )
             lead.last_called = datetime.datetime.now()
             lead.save()
@@ -943,9 +947,10 @@ def hangup_call(request):
     if request.method == "POST":
         print("###click2call: disconneting")
         HANGUP_ENDPOINT = env("CLICK2CALL_HANGUP_ENDPOINT")
-        AGENT_NUMBER = env("CLICK2CALL_AGENT_NUMBER")
+        agent_number = request.user.click2call_extension
+        print(f"###click2call: {agent_number} hanging up")
         try:
-            r = requests.post(HANGUP_ENDPOINT, data={"agent": AGENT_NUMBER})
+            r = requests.post(HANGUP_ENDPOINT, data={"agent": agent_number})
             return HttpResponse("")
         except Exception as e:
             return HttpResponse(str(e))
