@@ -105,4 +105,20 @@ urlpatterns = [
         name="category-delete",
     ),
     path("create-category/", CategoryCreateView.as_view(), name="category-create"),
+    # sales report
+    path(
+        "sales_report/new/",
+        views.SalesReportCreateView.as_view(),
+        name="sales-report-new",
+    ),
+    path(
+        "sales_report/",
+        views.SalesReportListView.as_view(),
+        name="sales-report-list",
+    ),
+    path(
+        "sales_report/<int:pk>/",
+        views.SalesReportDetailView.as_view(),
+        name="sales-report-detail",
+    ),
 ]

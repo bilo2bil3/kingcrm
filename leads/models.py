@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
@@ -111,3 +112,99 @@ class LeadsSheet(models.Model):
 
     def __str__(self):
         return self.url
+
+
+class SalesReport(models.Model):
+    EMPTY_CHOICE = [(None, "-" * 10)]
+
+    # agent
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="reports")
+
+    # month
+    MONTHS = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+    MONTH_CHOICES = EMPTY_CHOICE + [(str(i), m) for i, m in enumerate(MONTHS, start=1)]
+    month = models.CharField(max_length=2, choices=MONTH_CHOICES)
+
+    # year
+    CURRENT_YEAR = 2022
+    YEAR_CHOICES = EMPTY_CHOICE + [
+        (str(i), str(i)) for i in range(CURRENT_YEAR - 10, CURRENT_YEAR + 1)
+    ]
+    year = models.CharField(max_length=4, choices=YEAR_CHOICES)
+
+    # questions
+    PERFORMANCE_CHOICES = EMPTY_CHOICE + [
+        ("100", "Excellent"),
+        ("75", "Good"),
+        ("50", "Needs improvement"),
+        ("25", "Bad"),
+    ]
+    performance = models.CharField(
+        max_length=3,
+        choices=PERFORMANCE_CHOICES,
+        verbose_name="What you think about this agent sales performance this month?",
+    )
+    KPI_RATE_CHOICES = EMPTY_CHOICE + [
+        ("100", "80% - 100%"),
+        ("75", "60% - 80%"),
+        ("50", "40% - 60%"),
+        ("25", "0%"),
+    ]
+    kpi_rate = models.CharField(
+        max_length=3,
+        choices=KPI_RATE_CHOICES,
+        verbose_name="What KPI rate he deserves this month?",
+    )
+    REVENU_CHOICES = EMPTY_CHOICE + [
+        ("100", "10,000$ - $50,000"),
+        ("75", "5000$ - $10,000"),
+        ("50", "1000$ - $5000"),
+        ("25", "0$ - $1000"),
+    ]
+    revenu = models.CharField(
+        max_length=3,
+        choices=REVENU_CHOICES,
+        verbose_name="How much revenue the sales agent made this month?",
+    )
+    BEST_SERVICE_CHOICES = EMPTY_CHOICE + [
+        ("100", "Copy Trading"),
+        ("75", "Course"),
+        ("50", "Signals"),
+        ("25", "Consultation"),
+    ]
+    best_service = models.CharField(
+        max_length=3,
+        choices=BEST_SERVICE_CHOICES,
+        verbose_name="Which service you think he's best at this month?",
+    )
+    CUSTOMER_SUPPORT_CHOICES = EMPTY_CHOICE + [
+        ("100", "80% - 100%"),
+        ("75", "60% - 80%"),
+        ("50", "40% - 60%"),
+        ("25", "0%"),
+    ]
+    customer_support = models.CharField(
+        max_length=3,
+        choices=CUSTOMER_SUPPORT_CHOICES,
+        verbose_name="Customer Support Performance?",
+    )
+    total_rate = models.CharField(max_length=3)
+
+    def __str__(self) -> str:
+        return f"{self.agent} sales report {self.month}/{self.year}"
+
+    def get_absolute_url(self):
+        return reverse("leads:sales-report-list")

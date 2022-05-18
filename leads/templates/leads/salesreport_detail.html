@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+
+{% block content %}
+
+<div class="max-w-lg mx-auto mt-32 mb-52">
+  <a class="hover:text-blue-500" href="{% url 'leads:sales-report-list' %}">Go back to reports</a>
+  <div class="py-5 border-t border-gray-200">
+    <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Sales report</h1>
+  </div>
+  <div class="w-full mx-auto overflow-auto flex justify-between">
+    <table class="table-auto w-full text-left whitespace-no-wrap">
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">Agent</th>
+        <td class="px-4 py-3">{{ report.agent }}</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">Year</th>
+        <td class="px-4 py-3">{{ report.year }}</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">Month</th>
+        <td class="px-4 py-3">{{ report.month }}</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">performance</th>
+        <td class="px-4 py-3">{{ report.performance }}%</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">kpi_rate</th>
+        <td class="px-4 py-3">{{ report.kpi_rate }}%</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">revenu</th>
+        <td class="px-4 py-3">{{ report.revenu }}%</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">best_service</th>
+        <td class="px-4 py-3">{{ report.best_service }}%</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">customer_support</th>
+        <td class="px-4 py-3">{{ report.customer_support }}%</td>
+      </tr>
+      <tr>
+        <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">total_rate</th>
+        <td class="px-4 py-3">{{ report.total_rate }}%</td>
+      </tr>
+    </table>
+  </div>
+</div>
+{% endblock content %}

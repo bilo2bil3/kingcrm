@@ -8,6 +8,7 @@ from .custom_form_fields import (
     ModelMultiSelectField,
     ModelAttributeMultiSelectField,
 )
+from . import models
 
 User = get_user_model()
 
@@ -181,3 +182,18 @@ class DashboardForm(forms.Form):
 
     start_date = DateField(required=True)
     end_date = DateField(required=True)
+
+
+class SalesReportForm(forms.ModelForm):
+    class Meta:
+        model = models.SalesReport
+        fields = (
+            "agent",
+            "year",
+            "month",
+            "performance",
+            "kpi_rate",
+            "revenu",
+            "best_service",
+            "customer_support",
+        )

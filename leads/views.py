@@ -35,6 +35,7 @@ import csv
 import requests
 from . import stats
 from . import exporter
+from . import models
 
 logger = logging.getLogger(__name__)
 
@@ -1160,3 +1161,52 @@ class DashboardListView(OrganisorAndLoginRequiredMixin, generic.ListView):
             filename = "dashboard_export.csv"
             return exporter.export_csv(header, rows, filename)
         return super().get(request, *args, **kwargs)
+
+
+class SalesReportCreateView(OrganisorAndLoginRequiredMixin, generic.FormView):
+    """display a form to select an agent, a year, a month and some questions
+    that are used to evaluate agent performance.
+    """
+
+    # model = models.SalesReport
+    # fields = (
+    #     "agent",
+    #     "year",
+    #     "month",
+    #     "performance",
+    #     "kpi_rate",
+    #     "revenu",
+    #     "best_service",
+    #     "customer_support",
+    # )
+    template_name = "leads/salesreport_new.html"
+    form_class = forms.SalesReportForm
+    success_url = reverse_lazy("leads:sales-report-list")
+
+    def form_valid(self, form):
+        total_rate = int(
+            (
+                int(form.cleaned_data["performance"])
+                + int(form.cleaned_data["kpi_rate"])
+                + int(form.cleaned_data["revenu"])
+                + int(form.cleaned_data["best_service"])
+                + int(form.cleaned_data["customer_support"])
+            )
+            / 500
+            * 100
+        )
+        form.instance.total_rate = str(total_rate)
+        form.save()
+        return super().form_valid(form)
+
+
+class SalesReportListView(OrganisorAndLoginRequiredMixin, generic.ListView):
+    model = models.SalesReport
+    context_object_name = "reports"
+    template_name = "leads/salesreport_list.html"
+
+
+class SalesReportDetailView(OrganisorAndLoginRequiredMixin, generic.DetailView):
+    model = models.SalesReport
+    context_object_name = "report"
+    template_name = "leads/salesreport_detail.html"
