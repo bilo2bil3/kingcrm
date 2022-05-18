@@ -3,6 +3,11 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from .models import Lead, Agent, Category, FollowUp, LeadsSheet, Tag
+from .custom_form_fields import (
+    DateField,
+    ModelMultiSelectField,
+    ModelAttributeMultiSelectField,
+)
 
 User = get_user_model()
 
@@ -130,77 +135,22 @@ class UploadLeadsWithAgentForm(forms.Form):
     agent = forms.ModelChoiceField(queryset=Agent.objects.all())
 
 
-class DateInput(forms.DateInput):
-    input_type = "date"
-
-
 ### search leads ###
 class SearchLeadsForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["source"] = forms.MultipleChoiceField(
-            choices=self.get_choices("source"),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-        self.fields["service"] = forms.MultipleChoiceField(
-            choices=self.get_choices("service"),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-        self.fields["country"] = forms.MultipleChoiceField(
-            choices=self.get_choices("country"),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-        self.fields["agent"] = forms.MultipleChoiceField(
-            choices=self.get_agents(),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-        self.fields["campaign"] = forms.MultipleChoiceField(
-            choices=self.get_choices("campaign"),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-        self.fields["category"] = forms.MultipleChoiceField(
-            choices=self.get_catgs(),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-        self.fields["tag"] = forms.MultipleChoiceField(
-            choices=self.get_tags(),
-            required=False,
-            widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
-        )
-
     # text input
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
     email = forms.EmailField(required=False)
     phone_number = forms.CharField(required=False)
-    start_date = forms.DateField(required=False, widget=DateInput())
-    end_date = forms.DateField(required=False, widget=DateInput())
+    start_date = DateField(required=False)
+    end_date = DateField(required=False)
     # select input
-    # must be dynamic (ie. reflect db state)
-    # so should be included in __init__ method instead
-
-    def get_choices(self, field_name):
-        return [("", "------")] + [
-            (v, v) for v in Lead.objects.values_list(field_name, flat=True).distinct()
-        ]
-
-    def get_agents(self):
-        return [("", "------")] + [
-            (agent.pk, f"{agent.user.first_name} {agent.user.last_name}")
-            for agent in Agent.objects.all()
-        ]
-
-    def get_catgs(self):
-        return [("", "------")] + [(catg.pk, catg) for catg in Category.objects.all()]
-
-    def get_tags(self):
-        return [("", "------")] + [(tag.pk, tag) for tag in Tag.objects.all()]
+    agent = ModelMultiSelectField(queryset=Agent.objects.all(), required=False)
+    category = ModelMultiSelectField(queryset=Category.objects.all(), required=False)
+    source = ModelAttributeMultiSelectField("source", required=False)
+    service = ModelAttributeMultiSelectField("service", required=False)
+    country = ModelAttributeMultiSelectField("country", required=False)
+    campaign = ModelAttributeMultiSelectField("campaign", required=False)
 
 
 ### load from google sheets ###
@@ -217,19 +167,17 @@ class StatsFilterForm(forms.Form):
     we need a form to select the agent, a start and an end date.
     """
 
-    start_date = forms.DateField(
-        required=False, widget=DateInput(attrs={"required": "required"})
-    )
-    end_date = forms.DateField(required=False, widget=DateInput())
-    agent = forms.ModelChoiceField(
-        queryset=Agent.objects.all(),
-        widget=forms.SelectMultiple(
-            attrs={"multiple": "multiple", "required": "required"}
-        ),
-    )
+    start_date = DateField(required=True)
+    end_date = DateField(required=False)
+    agent = ModelMultiSelectField(queryset=Agent.objects.all())
 
 
 ### dashboard ###
 class DashboardForm(forms.Form):
-    start_date = forms.DateField(widget=DateInput(attrs={"required": "required"}))
-    end_date = forms.DateField(widget=DateInput(attrs={"required": "required"}))
+    """
+    to show crm stats during a specific period,
+    we need a form to select a start and an end date.
+    """
+
+    start_date = DateField(required=True)
+    end_date = DateField(required=True)
