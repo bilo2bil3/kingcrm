@@ -227,3 +227,9 @@ class StatsFilterForm(forms.Form):
             attrs={"multiple": "multiple", "required": "required"}
         ),
     )
+
+
+### dashboard ###
+class DashboardForm(forms.Form):
+    start_date = forms.DateField(widget=DateInput(attrs={"required": "required"}))
+    end_date = forms.DateField(widget=DateInput(attrs={"required": "required"}))

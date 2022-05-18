@@ -3,7 +3,7 @@ import datetime
 from django import contrib
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import Q, Count, ExpressionWrapper, IntegerField
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -63,45 +63,8 @@ class LandingPageView(generic.TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect("dashboard")
+            return redirect("dashboard_form")
         return super().dispatch(request, *args, **kwargs)
-
-
-class DashboardView(OrganisorAndLoginRequiredMixin, generic.TemplateView):
-    template_name = "dashboard.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(DashboardView, self).get_context_data(**kwargs)
-
-        user = self.request.user
-
-        # How many leads we have in total
-        total_lead_count = Lead.objects.filter(organisation=user.userprofile).count()
-
-        # How many new leads in the last 30 days
-        thirty_days_ago = datetime.date.today() - datetime.timedelta(days=30)
-
-        # total_in_past30 = Lead.objects.filter(
-        #     organisation=user.userprofile, date_added__gte=thirty_days_ago
-        # ).count()
-
-        # How many converted leads in the last 30 days
-        # TODO: fix this
-        # converted_category = Category.objects.get(name="Converted")
-        # converted_in_past30 = Lead.objects.filter(
-        #     organisation=user.userprofile,
-        #     category=converted_category,
-        #     converted_date__gte=thirty_days_ago,
-        # ).count()
-
-        context.update(
-            {
-                "total_lead_count": total_lead_count,
-                # "total_in_past30": total_in_past30,
-                # "converted_in_past30": converted_in_past30,
-            }
-        )
-        return context
 
 
 def landing_page(request):
@@ -1077,7 +1040,7 @@ class StatsListView(OrganisorAndLoginRequiredMixin, generic.ListView):
             header = row.keys()
             # TODO: howto format header? (eg. make all fields uppercase)
             # header = [k.upper() for k in row.keys()]
-            return exporter.export_csv(header, rows)
+            return exporter.export_csv(header, rows, "stats_export.csv")
         return super().get(request, *args, **kwargs)
 
     def get_dates(self):
@@ -1102,3 +1065,93 @@ class StatsListView(OrganisorAndLoginRequiredMixin, generic.ListView):
 class StatsFilterView(OrganisorAndLoginRequiredMixin, generic.FormView):
     form_class = forms.StatsFilterForm
     template_name = "leads/stats_filter.html"
+
+
+class DashboardFormView(OrganisorAndLoginRequiredMixin, generic.FormView):
+    """display a form to select a start and end dates
+    that are used to calculate some stats
+    for DashboardListView.
+    """
+
+    form_class = forms.DashboardForm
+    template_name = "leads/dashboard_form.html"
+
+
+class DashboardListView(OrganisorAndLoginRequiredMixin, generic.ListView):
+    """display/export stats for each catg, total leads
+    and converted leads during a specific period."""
+
+    template_name = "leads/dashboard_list.html"
+    model = Lead
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        start_date, end_date = self.get_dates()
+        # TODO: how do these fields affect queried leads?
+        # organisation, user.userprofile...
+        # user = self.request.user
+        # total_lead_count = Lead.objects.filter(organisation=user.userprofile).count()
+        total_lead_count = Lead.objects.filter(
+            date_added__date__gte=start_date,
+            date_added__date__lte=end_date,
+        ).count()
+        catgs = Category.objects.filter(
+            leads__date_added__date__gte=start_date,
+            leads__date_added__date__lte=end_date,
+        ).annotate(
+            percentage=ExpressionWrapper(
+                Count("leads") * 100.0 / total_lead_count,
+                output_field=IntegerField(),
+            )
+        )
+        unassigned_lead_count = int(
+            Lead.objects.filter(category__isnull=True).count() / total_lead_count * 100
+        )
+        converted_lead_count = catgs.get(name="Converted").leads.count()
+        export_link = add_query_string(self.request.get_full_path(), {"export": 1})
+        context.update(
+            {
+                "total_lead_count": total_lead_count,
+                "converted_lead_count": converted_lead_count,
+                "start_date": str(start_date.date()),
+                "end_date": str(end_date.date()),
+                "catgs": catgs,
+                "unassigned_lead_count": unassigned_lead_count,
+                "export_link": export_link,
+            }
+        )
+        return context
+
+    def get_dates(self):
+        """return start and end dates as date objects not strings.
+        so they're suitable for calculating agents stats."""
+        # get dates from query string
+        start_date = self.request.GET["start_date"]
+        end_date = self.request.GET["end_date"]
+        # cast them to date objects
+        if start_date and end_date:
+            start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            # TODO: do i need to add 1 day period
+            # to end_date so it reaches midnight?
+            end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+        elif start_date:
+            start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            end_date = start_date
+        return start_date, end_date
+
+    def get(self, request, *args, **kwargs):
+        """a custom handler for http get that can handle both cases of:
+        - show stats at a webpage
+        - export stats as a csv file
+        """
+        if "export=1" in request.get_full_path():
+            context = self.get_context_data()
+            del context["export_link"]
+            catgs = context.pop("catgs")
+            for catg in catgs:
+                context[catg.name] = f"{catg.percentage}%"
+            rows = [context]
+            header = context.keys()
+            filename = "dashboard_export.csv"
+            return exporter.export_csv(header, rows, filename)
+        return super().get(request, *args, **kwargs)
