@@ -6,7 +6,7 @@
 <div class="max-w-lg mx-auto mt-32 mb-52">
   <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
   <div class="py-5 border-t border-gray-200">
-    <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Sales report</h1>
+    <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Sales Report</h1>
     <a class="hover:text-blue-500" href="{% url 'leads:sales-report-new' %}">
       Create new report
     </a>
@@ -14,8 +14,8 @@
   <div class="w-full mx-auto overflow-auto flex justify-between">
     <ul class="w-full text-left whitespace-no-wrap">
       {% for report in reports %}
-        <li class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">
-          <a class="hover:text-blue-500" href="{% url 'leads:sales-report-detail' report.pk %}">{{ report }}</a>
+        <li class="px-4 py-3 mb-5 mt-5 title-font tracking-wider font-medium text-gray-200 text-sm bg-blue-800 rounded-tl rounded-bl">
+          <a class="hover:text-green-300" href="{% url 'leads:sales-report-detail' report.pk %}">{{ report }}</a>
         </li>
       {% endfor %}
     </ul>
