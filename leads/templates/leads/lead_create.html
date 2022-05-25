@@ -3,16 +3,16 @@
 
 {% block content %}
 
-<div class="max-w-lg mx-auto mt-32">
+<div class="container px-5 mx-auto">
     <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
     <div class="py-5 border-t border-gray-200">
         <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Create new lead</h1>
     </div>
 
-    <form method="post" class="mt-5 mb-52">
+    <form method="post" class="grid gap-1 grid-cols-2  flex flex-wrap">
         {% csrf_token %}
         {{ form|crispy }}
-        <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
+        <button type='submit' class="w-max text-white bg-blue-700 border-0 py-3 px-11 focus:outline-none hover:bg-indigo-600 rounded">
             Submit
         </button>
     </form>

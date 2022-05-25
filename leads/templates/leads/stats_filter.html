@@ -3,14 +3,15 @@
 
 {% block content %}
 
-<div class="max-w-lg mx-auto mt-32 mb-52">
+<div class=" mx-auto">
   <a class="hover:text-blue-500" href="{% url 'leads:lead-list' %}">Go back to leads</a>
   <div class="py-5 border-t border-gray-200">
     <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Agent stats</h1>
   </div>
-  <form method="get" class="mt-5" action="{% url 'leads:stats_list' %}">
+  <form method="get" class="gap-x-5 flex flex-wrap mt-8 items-center justify-center" action="{% url 'leads:stats_list' %}">
     {{ form|crispy }}
-    <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
+    <br>
+    <button type='submit' class="w-max mt-3 text-white bg-blue-700 border-0 py-3 px-3 focus:outline-none hover:bg-indigo-600 rounded">
     Show stats
     </button>
   </form>

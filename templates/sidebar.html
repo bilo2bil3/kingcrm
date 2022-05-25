@@ -1,0 +1,121 @@
+    {% if request.user.is_authenticated %}
+    <!-- Sidebar -->
+      <div x-data="setup()" :class="{ 'dark': isDark }">
+
+<div class="mt-16 ml-5 rounded-3xl  fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-blue-800 dark:bg-gray-900 text-white transition-all duration-300 border-none z-10 sidebar">
+              <div class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
+                <ul class="flex flex-col py-4 space-y-1">
+                    
+                  <li>
+                    <a href="{% url 'dashboard_form' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
+                    </a>
+                  </li>
+                    
+                  <li>
+                    <a href="{% url 'leads:lead-list' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+</svg>                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate  ">Leads</span>
+                    </a>
+                  </li>
+  
+                                    <li>
+                    <a href="{% url 'leads:lead-search' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+</svg>
+                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate ">Filters</span>
+                    </a>
+                  </li>
+{% if request.user.is_organisor %}
+                      <li>
+                    <a href="{% url 'leads:lead-create' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate ">Create</span>
+                    </a>
+                  </li>
+
+                  <li>
+                    <a href="{% url 'agents:agent-list' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate ">Agents</span>
+                    </a>
+                  </li>
+                    
+                  <li>
+                    <a href="{% url 'leads:leads-upload' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+</svg>
+                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate ">Upload</span>
+                    </a>
+                  </li>
+                    
+                  <li>
+                    <a href="{% url 'leads:add-sheet' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+</svg>
+                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate ">API</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'leads:add-tag' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+</svg>
+                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate">Tags</span>
+                    </a>
+                  </li>
+                  
+                                    <li>
+                    <a href="{% url 'leads:stats_filter' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+</svg>                      </span>
+                      <span class="ml-2 text-sm tracking-wide truncate">Reports</span>
+                      
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="{% url 'leads:sales-report-list' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
+                      <span class="inline-flex justify-center items-center ml-4">
+<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+</svg>                 </span>
+                      <span class="ml-2 text-sm tracking-wide truncate">Sales Survey</span>
+                      
+                    </a>
+                  </li>
+
+      {% endif %}
+                </ul>
+          <img src="https://w2m-trading.com/wp-content/uploads/2022/05/w2m-crm-smallcopy.png" class="max-w-full h-auto pl-24 pr-24" alt="Flowers in Chania">
+                <p class="px-5 py-3 hidden md:block text-center text-xs">Copyright @2021</p>
+              </div>
+            </div>
+          
+            </div>
+            <!-- ./Sidebar -->
+{% endif %}

@@ -39,7 +39,7 @@ class LeadModelForm(forms.ModelForm):
             "source",
             "service",
             "agent",
-            "description",
+            # "description",
             "phone_number",
             "country",
             "campaign",

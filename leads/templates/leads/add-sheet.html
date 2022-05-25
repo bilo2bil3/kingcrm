@@ -3,9 +3,9 @@
 
 {% block content %}
 
-<section class="mx-16  mt-32 text-gray-700 body-font">
-  <div class="h-full ml-14 mt-14 mb-10 md:ml-64">
-        <div class="items-center ">
+<section class=" text-gray-700 body-font items-center justify-center text-center">
+  <div class="h-full mb-10 items-center justify-center ">
+        <div class="items-center justify-center ">
 
                 <div class="flex flex-col text-center ">
                 <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Connect Google Sheets</h1>
@@ -15,20 +15,22 @@
                 </a><br>
 </div>
         </div>
-        <div class="w-1/2 mb-10">
-            <form method="post" class="mt-5">
+        <div class="w-full mb-10 text-center mt-14">
+            <form method="post" class="gap-x-2.5 flex flex-wrap mt-5 items-center justify-center ">
         {% csrf_token %}
         {{ form|crispy }}
-        <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
-            Add
+        <div class="w-full">
+        <button type='submit' class="w-1/4 text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
+            Connect
         </button>
+        </div>
     </form>
 </div>
-        <div class="flex flex-col w-full">
+        <div class="flex flex-col ">
             <div class="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
             <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                <div class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg">
-                <table class="min-w-full divide-y">
+                <div class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg   ">
+                <table class="min-w-full divide-y 1/2">
                     <thead class="bg-gray-50" >
                         <tr>
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
@@ -40,11 +42,11 @@
                             </th>
 
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                           Sheet name
-                           </th>
-                              <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                           Delete
-                           </th>
+                        Sheet name
+                        </th>
+                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                        Delete
+                        </th>
                         </tr>
                     </thead>
         
@@ -55,8 +57,8 @@
                                     <a class="text-blue-800 dark:text-indigo-600 hover:text-blue-800">{{ sheet.source }}</a>
                                 </td>
 
-                                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
-                               {{ sheet.url }}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
+                            {{ sheet.url }}
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
