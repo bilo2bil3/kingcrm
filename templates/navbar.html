@@ -5,16 +5,18 @@
 <!-- Header -->
       <div class="mt-6 fixed w-full flex items-center justify-between h-14 text-white z-10">
         <div class="mr-6 rounded-3xl flex items-center justify-start md:justify-center pl-3 w-14 md:w-72 h-14 bg-blue-800 dark:bg-gray-800 border-none">
-          {% if request.user.is_authenticated %}
+      
           <span class="hidden md:block">W2M TRADING CRM</span>
         </div>
-          {% endif %}
+         
         <div class="rounded-3xl mr-9 w-full flex justify-between items-center h-14 bg-blue-800 dark:bg-gray-800">
           <div class=" ml-10 p-2 flex  italic md:text-xl">
+                {% if request.user.is_authenticated %}
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
   <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
 </svg>
 Welcome {{ request.user.username }}!
+ {% endif %}
           </div>
               {% if request.user.is_authenticated %}
           <ul class="flex items-center">

@@ -44,7 +44,7 @@ class LeadModelForm(forms.ModelForm):
             "country",
             "campaign",
             "email",
-            "profile_picture",
+            # "profile_picture",
         )
 
     def clean_first_name(self):
@@ -108,7 +108,9 @@ class AssignAgentForm(forms.Form):
 class LeadCategoryUpdateForm(forms.ModelForm):
     class Meta:
         model = Lead
-        fields = ("category",)
+        fields = (
+            "category",
+        )
 
 
 class CategoryModelForm(forms.ModelForm):

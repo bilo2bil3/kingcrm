@@ -38,18 +38,20 @@
 </svg>
                         Edit
                     </a>
-{% endif %}
+
                 </div>
                 <div class="mt-11">
                             <form form method="post" class="grid gap-1 grid-cols-2  flex flex-wrap">
                 {% csrf_token %}
                 {{ form|crispy }}
+                <br>
                 <button type="submit" class="w-1/2  text-white bg-blue-700 border-0 py-3 px-3 focus:outline-none hover:bg-indigo-600 rounded">Submit</button>
             </form>
                         <div class="mt-5 py-5 border-t border-gray-200">
                 <a href="{% url 'leads:lead-delete' lead.pk %}" class="w-1/2 mt-3 text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
                     Delete
                 </a>
+                {% endif %}
             </div>
 </div></div></div></div>
 </section>

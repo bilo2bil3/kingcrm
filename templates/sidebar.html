@@ -2,10 +2,10 @@
     <!-- Sidebar -->
       <div x-data="setup()" :class="{ 'dark': isDark }">
 
-<div class="mt-16 ml-5 rounded-3xl  fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-blue-800 dark:bg-gray-900 text-white transition-all duration-300 border-none z-10 sidebar">
+<div class="mt-16 ml-5 rounded-3xl h-5/6   fixed flex flex-col top-14 left-0 w-14 hover:w-64 md:w-64 bg-blue-800 dark:bg-gray-900 text-white transition-all duration-300 border-none z-10 sidebar">
               <div class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow">
                 <ul class="flex flex-col py-4 space-y-1">
-                    
+                    {% if request.user.is_organisor %}
                   <li>
                     <a href="{% url 'dashboard_form' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
                       <span class="inline-flex justify-center items-center ml-4">
@@ -14,7 +14,7 @@
                       <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
                     </a>
                   </li>
-                    
+                    {% endif %}
                   <li>
                     <a href="{% url 'leads:lead-list' %}" class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-blue-600 dark:hover:bg-blue-600 text-white-600  dark:text-gray-400  hover:text-gray-200 border-l-4 border-transparent hover:border-gray-200 dark:hover:border-gray-200 pr-6">
                       <span class="inline-flex justify-center items-center ml-4">
@@ -111,8 +111,10 @@
 
       {% endif %}
                 </ul>
-          <img src="https://w2m-trading.com/wp-content/uploads/2022/05/w2m-crm-smallcopy.png" class="max-w-full h-auto pl-24 pr-24" alt="Flowers in Chania">
+                <div class="object-none object-bottom">
+          <img src="https://w2m-trading.com/wp-content/uploads/2022/05/w2m-crm-smallcopy.png" class="max-w-full h-auto pl-24 pr-24" alt="CRM logo">
                 <p class="px-5 py-3 hidden md:block text-center text-xs">Copyright @2021</p>
+                </div>
               </div>
             </div>
           

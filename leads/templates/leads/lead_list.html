@@ -19,7 +19,7 @@
 </div>
 
         <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200 ">
-            
+              {% if request.user.is_organisor %}
                 <div class="dropdown ">
     <button class=" dropbtn w-full flex items-center justify-center px-8 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-700 md:py-2 md:text-lg md:px-10 sm:text-xs">Action</button>
     <div class="dropdown-content">
@@ -32,7 +32,7 @@
 
     </div>
 </div>
-                {% if request.user.is_organisor %}
+              
             
                 
     
@@ -111,9 +111,7 @@
                             <a class="text-gray-400 hover:text-blue-500" href="{{ date_url_asc }}">&#9650;</a>
                             <a class="text-gray-400 hover:text-blue-500" href="{{ date_url_desc }}">&#9660;</a>
                             </th>
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                                Last called
-                            </th>
+
  {% if request.user.is_organisor %}       
                         <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Edit
@@ -181,9 +179,6 @@
                                 </td> -->
                                 <td class="px-6 py-4 whitespace-nowrap text-sm  text-gray-600 dark:text-gray-200 text-center ">
                                     {{ lead.date_added }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm  text-gray-600 dark:text-gray-200 text-center ">
-                                    {{ lead.last_called }}
                                 </td>
                                  {% if request.user.is_organisor %}     
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

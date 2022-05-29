@@ -3,17 +3,14 @@
 
 {% block content %}
 <section class="text-gray-700 body-font">
-    <div class="container mx-auto flex px-5 py-24 items-center justify-center flex-col">
-      <img class="lg:w-2/6 md:w-3/6 w-5/6 mb-10 object-cover object-center rounded" alt="hero" src="{% static 'images/dashboard.svg' %}">
+    <div class="container mx-auto flex px-5 items-center justify-center flex-col">
+        <img src="https://w2m-trading.com/wp-content/uploads/elementor/thumbs/logo-headeeer-pnlcrmpzob8k1rxjayshubxoq4ue4j87ry3uly3fjw.png" class="max-w-full h-auto pl-24 pr-24" alt="CRM logo">
       <div class="text-center lg:w-2/3 w-full">
-        <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-            CRM built with Django
-        </h1>
-        <p class="mb-8 leading-relaxed">
+        <h1 class="title-font sm:text-4xl text-3xl mt-6 font-medium text-gray-900">
             This CRM helps you manage your leads.
-        </p>
-        <div class="flex justify-center">
-          <a href="{% url 'login' %}" class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+        </h1>
+        <div class="flex justify-center mt-9 ">
+          <a href="{% url 'login' %}" class="inline-flex text-white bg-blue-700 border-0 py-3 px-6 focus:outline-none hover:bg-indigo-600 rounded text-xl">
             Login to get started
           </a>
         </div>
