@@ -136,10 +136,10 @@
                                     {{ lead.service }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
-                                    {% if request.user.is_organisor %}
+                          
                                         {{ lead.phone_number }}
                                         <br>
-                                    {% endif %}
+                                
                                     <button class="click2call-call mt-3 text-white dark:bg-blue-800 bg-blue-800  border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
                                         call
                                     </button>
