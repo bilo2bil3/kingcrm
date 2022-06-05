@@ -153,13 +153,6 @@ class SearchLeadsForm(forms.Form):
     campaign = ModelAttributeMultiSelectField("campaign", required=False)
 
 
-### load from google sheets ###
-class LeadsSheetForm(forms.ModelForm):
-    class Meta:
-        model = LeadsSheet
-        fields = ("source", "url", "sheet_name")
-
-
 ### agent stats/reports ###
 class StatsFilterForm(forms.Form):
     """

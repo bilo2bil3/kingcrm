@@ -13,9 +13,8 @@ from django.urls import path, include
 from leads.views import (
     LandingPageView,
     SignupView,
-    DashboardFormView,
-    DashboardListView,
 )
+from leads.refactored_views import DashboardFormView, DashboardListView
 
 
 urlpatterns = [

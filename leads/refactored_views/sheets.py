@@ -1,0 +1,26 @@
+from django.views import generic
+from django.urls import reverse_lazy
+from leads.models import LeadsSheet
+from agents.mixins import OrganisorAndLoginRequiredMixin
+
+
+class SheetCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+    model = LeadsSheet
+    fields = ("source", "url", "sheet_name")
+    template_name = "leads/add-sheet.html"
+    # success_url = reverse_lazy('leads:lead-list')
+    success_url = reverse_lazy("leads:add-sheet")
+
+    def form_valid(self, form):
+        form.instance.organisation = self.request.user.userprofile
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        kwargs["sheets"] = LeadsSheet.objects.all()
+        return super().get_context_data(**kwargs)
+
+
+class SheetDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
+    model = LeadsSheet
+    success_url = reverse_lazy("leads:add-sheet")
+    template_name = "leads/delete-sheet.html"
