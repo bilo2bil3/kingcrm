@@ -309,15 +309,15 @@ class LeadCategoryUpdateView(LoginRequiredMixin, generic.UpdateView):
     def get_success_url(self):
         return reverse("leads:lead-detail", kwargs={"pk": self.get_object().id})
 
-    def form_valid(self, form):
-        #     lead_before_update = self.get_object()
-        #     instance = form.save(commit=False)
-        #     converted_category = Category.objects.get(name="Converted")
-        #     if form.cleaned_data["category"] == converted_category:
-        #         # update the date at which this lead was converted
-        #         if lead_before_update.category != converted_category:
-        #             # this lead has now been converted
-        #             instance.converted_date = datetime.datetime.now()
-        #     instance.save()
-        #     return super(LeadCategoryUpdateView, self).form_valid(form)
-        pass
+    # def form_valid(self, form):
+    #     #     lead_before_update = self.get_object()
+    #     #     instance = form.save(commit=False)
+    #     #     converted_category = Category.objects.get(name="Converted")
+    #     #     if form.cleaned_data["category"] == converted_category:
+    #     #         # update the date at which this lead was converted
+    #     #         if lead_before_update.category != converted_category:
+    #     #             # this lead has now been converted
+    #     #             instance.converted_date = datetime.datetime.now()
+    #     #     instance.save()
+    #     #     return super(LeadCategoryUpdateView, self).form_valid(form)
+    #     pass
