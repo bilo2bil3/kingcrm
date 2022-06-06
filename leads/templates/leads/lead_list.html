@@ -86,10 +86,11 @@
                             <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Phone
                             </th>
+                             {% if request.user.is_organisor %} 
                             <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Whatsapp
                             </th>
-
+ {% endif %}
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Country
                             <a class="text-gray-400 hover:text-blue-500" href="{{ country_url_asc }}">&#9650;</a>
