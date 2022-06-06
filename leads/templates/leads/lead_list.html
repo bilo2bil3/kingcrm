@@ -19,7 +19,7 @@
 </div>
 
         <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200 ">
-              {% if request.user.is_organisor %}
+            {% if request.user.is_organisor  %}
                 <div class="dropdown ">
     <button class=" dropbtn w-full flex items-center justify-center px-8 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-700 md:py-2 md:text-lg md:px-10 sm:text-xs">Action</button>
     <div class="dropdown-content">
@@ -86,6 +86,9 @@
                             <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Phone
                             </th>
+                            <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            Whatsapp
+                            </th>
 
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Country
@@ -136,10 +139,10 @@
                                     {{ lead.service }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
-                          
+                           {% if request.user.is_organisor  %}
                                         {{ lead.phone_number }}
                                         <br>
-                                
+                                 {% endif %}
                                     <button class="click2call-call mt-3 text-white dark:bg-blue-800 bg-blue-800  border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
                                         call
                                     </button>
@@ -147,6 +150,18 @@
                                         hangup
                                     </button>
                                 </td>
+      {% if request.user.is_organisor  %}
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
+                     
+                                        <a class="" href="https://api.whatsapp.com/send?phone={{ lead.phone_number }}">
+                                    <button class="mt-3 text-white dark:bg-blue-800 bg-green-600  border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
+                                        Whatsapp
+                                    </button>
+                                        </a> 
+                                </td>
+
+      {% endif %}
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
                                     {{ lead.country }}
                                 </td>
