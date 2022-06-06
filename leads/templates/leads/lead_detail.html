@@ -43,18 +43,18 @@
                     <span class="text-blue-800 ">Source</span>
                     <span class="ml-auto text-gray-900">{{ lead.source }}</span>
                 </div>
-
+  {% if request.user.is_organisor %} 
                 <div class="flex border-t mb-1 border-gray-300 py-2">
                     <span class="text-blue-800 ">Email</span>
                     <span class="ml-auto text-gray-900">{{ lead.email }}</span>
                 </div>
 
- 
+
                 <div class="flex border-t mb-1 border-gray-300 py-2">
                     <span class="text-blue-800 ">Phone Number</span>
                     <span class="ml-auto text-gray-900">{{ lead.phone_number }}</span>
                 </div>
-
+  {% endif %}
                 <div class="flex border-t mb-1 border-gray-300 py-2">
                     <span class="text-blue-800 ">Country</span>
                     <span class="ml-auto text-gray-900">{{ lead.country }}</span>
