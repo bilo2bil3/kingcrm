@@ -151,6 +151,8 @@ class SearchLeadsForm(forms.Form):
     service = ModelAttributeMultiSelectField("service", required=False)
     country = ModelAttributeMultiSelectField("country", required=False)
     campaign = ModelAttributeMultiSelectField("campaign", required=False)
+    tag = ModelMultiSelectField(queryset=Tag.objects.all(), required=False)
+
 
 
 ### agent stats/reports ###

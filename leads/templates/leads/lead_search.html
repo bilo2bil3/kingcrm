@@ -15,6 +15,7 @@
 
 <form method="get" class="grid gap-1 grid-cols-2  flex flex-wrap" action="{% url 'leads:lead-list' %}">
     {{ form|crispy }}
+    <br>
     <button type='submit' class="w-max  text-white bg-blue-700 border-0 py-3 px-11 focus:outline-none hover:bg-indigo-600 rounded">
     Filter Leads
     </button>
