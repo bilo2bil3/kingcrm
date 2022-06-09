@@ -8,9 +8,9 @@
         <div class="items-center">
 
                 <div class="flex flex-col text-center ">
-                <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Agents</h1>
-                <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'agents:agent-create' %}">
-                    Create a new agent
+                <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Permissions</h1>
+                <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'permissions:permission-create' %}">
+                    Create a new permission
                 </a><br>
 </div>
         </div>
@@ -23,15 +23,11 @@
                     <thead class="bg-gray-50" >
                         <tr>
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                            Full Name
+                            Name
                             </th>
 
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                            Username
-                            </th>
-
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                            Extention
+                            code
                             </th>
 
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
@@ -39,41 +35,37 @@
                             <br>
 
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                            Permissions
+                            Delete
                             <br>
                         </tr>
                     </thead>
         
 <tbody>
-                {% for agent in object_list %}
+                {% for permission in object_list %}
                             <tr class="bg-gray-100 dark:bg-gray-900 text-center">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400">
-                                    <a class="text-blue-800 dark:text-indigo-600 hover:text-blue-800">{{ agent.user.first_name }} {{ agent.user.last_name }}</a>
+                                    <a class="text-blue-800 dark:text-indigo-600 hover:text-blue-800">{{ permission.name }}</a>
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
-                                {{ agent.user.username }}
-                                </td>
-
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
-                                {{ agent.user.click2call_extension }}
+                                {{ permission.code }}
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                                    <a href="{% url 'agents:agent-update' agent.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
+                                    <a href="{% url 'permissions:permission-update' permission.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
                                         Edit
                                     </a>
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                                    <a href="{% url 'agents:agent-permission' agent.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
-                                        Permissions
+                                    <a href="{% url 'permissions:permission-delete' permission.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
+                                        Delete
                                     </a>
                                 </td>
 
                             </tr>
                             {% empty %}
-                            <p>There are currently no agents</p>
+                            <p>There are currently no permissions</p>
                             {% endfor %}
                     </tbody>
                 </table>

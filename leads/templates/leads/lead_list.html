@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load agent_tags %}
 {% block content %}
 
 
@@ -12,23 +12,24 @@
 
                 <div class="flex flex-col text-center ">
                 <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Leads</h1>
-        {% if request.user.is_organisor %}
+        
                 <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'leads:category-list' %}">
                     View categories
-                </a><br>  {% endif %}
+                </a><br>
 </div>
 
         <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200 ">
-            {% if request.user.is_organisor  %}
+    {% if request.user|has_permissions:"show_action_button"%}      
                 <div class="dropdown ">
     <button class=" dropbtn w-full flex items-center justify-center px-8 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-700 md:py-2 md:text-lg md:px-10 sm:text-xs">Action</button>
     <div class="dropdown-content">
+    {%endif%}
 
     <a href="#" id="delete-leads">Delete</a>
-        {% if request.user.is_organisor %}
+        
     <a href="{{ export_link }}">Export</a>
     <a href="#" id="assign-leads-random">Assign Random</a>
-        {% endif %}
+        
 
     </div>
 </div>
@@ -57,7 +58,7 @@
                                 Cancel
                             </button>
                         </div>
-                    {% endif %}
+                    
         
             </div>
         </div>

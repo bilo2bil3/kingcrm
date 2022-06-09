@@ -24,6 +24,7 @@ urlpatterns = [
     path("dashboard/", DashboardListView.as_view(), name="dashboard_list"),
     path("leads/", include("leads.urls", namespace="leads")),
     path("agents/", include("agents.urls", namespace="agents")),
+    path("permissions/", include("permissions.urls", namespace="permissions")),
     path("signup/", SignupView.as_view(), name="signup"),
     path("reset-password/", PasswordResetView.as_view(), name="reset-password"),
     path(

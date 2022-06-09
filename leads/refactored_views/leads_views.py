@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-from agents.mixins import OrganisorAndLoginRequiredMixin
+from agents.mixins import OrganisorAndLoginRequiredMixin, PermissionAndLoginRequiredMixin
 from leads.models import Lead
 from leads.forms import LeadModelForm
 
@@ -24,9 +24,12 @@ class LeadDetailView(LoginRequiredMixin, generic.DetailView):
         return queryset
 
 
-class LeadCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+class LeadCreateView(PermissionAndLoginRequiredMixin, generic.CreateView):
     template_name = "leads/lead_create.html"
     form_class = LeadModelForm
+    
+    def get_page_code(self):
+        return 'create'
 
     def get_success_url(self):
         return reverse("leads:lead-list")

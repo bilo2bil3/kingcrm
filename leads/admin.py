@@ -16,12 +16,16 @@ class LeadAdmin(admin.ModelAdmin):
     list_filter = ["category"]
     search_fields = ["first_name", "last_name", "email"]
 
+class AgentAdmin(admin.ModelAdmin):
+    fields = ['user', 'organisation', 'permissions']
+    filter_horizontal = ['permissions']
+
 
 admin.site.register(Category)
 admin.site.register(User)
 admin.site.register(UserProfile)
 admin.site.register(Lead, LeadAdmin)
-admin.site.register(Agent)
+admin.site.register(Agent, AgentAdmin)
 admin.site.register(FollowUp)
 admin.site.register(LeadsSheet)
 admin.site.register(models.SalesReport)

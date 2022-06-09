@@ -1,14 +1,14 @@
 import datetime
 from django.views import generic
 from django.db.models import ExpressionWrapper, Count, IntegerField, Q, F
-from agents.mixins import OrganisorAndLoginRequiredMixin
+from agents.mixins import LoginRequiredMixin, OrganisorAndLoginRequiredMixin
 from leads import exporter
 from leads.forms import DashboardForm
 from leads.models import Lead, Category
 from leads.utils import add_query_string
 
 
-class DashboardFormView(OrganisorAndLoginRequiredMixin, generic.FormView):
+class DashboardFormView(LoginRequiredMixin, generic.FormView):
     """display a form to select a start and end dates
     that are used to calculate some stats
     for DashboardListView.

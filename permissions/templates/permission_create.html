@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+
+{% block content %}
+
+<div class="container px-5 mx-auto">
+
+    <div class="py-5 border-b border-gray-200 ">
+        <a class="hover:text-blue-500" href="{% url 'permissions:permission-list' %}">Go back to permissions</a>
+    </div>
+
+    <h1 class="text-4xl text-center text-[#004aad] font-extrabold mb-14">Create a new permission</h1>
+    <form method="post" class="grid gap-1 grid-cols-2  flex flex-wrap">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <br>
+        <button type="submit" class="w-max text-white bg-blue-700 border-0 py-3 px-11 focus:outline-none hover:bg-indigo-600 rounded">Create Permission</button>
+    </form>
+
+</div>
+{% endblock content %}

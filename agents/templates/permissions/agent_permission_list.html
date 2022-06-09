@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{%load agent_tags%}
+
+
+<section class="text-gray-700 body-font">
+    <div class="">
+        <div class="items-center">
+            <div class="flex flex-col text-center ">
+            <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Agent Permissions</h1>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="flex flex-col w-full">
+                <div class="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
+                <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                    <div class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg">
+                        <table class="min-w-full divide-y">
+                            <thead class="bg-gray-50" >
+                                <tr>
+                                    <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                                    Selected
+                                    </th>
+
+                                    <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                                    Name
+                                    </th>
+
+                                    <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                                    code
+                                    </th>
+                                </tr>
+                            </thead>
+                
+                            <tbody>
+                        {% for permission in object_list.permissions%}
+                        
+                                    <tr class="bg-gray-100 dark:bg-gray-900 text-center">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400">
+                                            <input {%if object_list.agent.permissions|in_permissions:permission %} checked {% endif %} type="checkbox" id="{{ permission.code }}" name="permissions" value="{{permission.code}}">
+                                        </td>
+
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400">
+                                            <a class="text-blue-800 dark:text-indigo-600 hover:text-blue-800">{{ permission.name }}</a>
+                                        </td>
+
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
+                                        {{ permission.code }}
+                                        </td>
+
+                                    </tr>
+                                    {% empty %}
+                                    <p>There are currently no permissions</p>
+                                    {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <button type="submit" class="w-1/2 text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">Save</button>
+        </form>
+    </div>
+</div>
+    </section> 
+{% endblock content %}
