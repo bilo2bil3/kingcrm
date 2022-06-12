@@ -12,10 +12,13 @@
 
                 <div class="flex flex-col text-center ">
                 <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Leads</h1>
-        
+         {% if request.user|has_permissions:"create_category"%}   
                 <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'leads:category-list' %}">
                     View categories
-                </a><br>
+                </a>
+                {% endif %}   
+                <br>
+
 </div>
 
         <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200 ">
