@@ -8,6 +8,8 @@
       class="overflow-y-auto overflow-x-hidden flex flex-col justify-between flex-grow"
     >
       <ul class="flex flex-col py-4 space-y-1">
+      
+        {% if request.user|has_permissions:"dashboard" %}
         <li>
           <a
             href="{% url 'dashboard_form' %}"
@@ -32,6 +34,7 @@
             <span class="ml-2 text-sm tracking-wide truncate">Dashboard</span>
           </a>
         </li>
+   {% endif %}   
 
         <li>
           <a
@@ -82,6 +85,7 @@
             <span class="ml-2 text-sm tracking-wide truncate">Filters</span>
           </a>
         </li>
+
         {% if request.user|has_permissions:"create" %}
         <li>
           <a
@@ -107,7 +111,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">Create</span>
           </a>
         </li>
-        {%endif%} {% if request.user.is_organisor %}
+   {% endif %}   
+ 
+
+{% if request.user|has_permissions:"create_agent"%}     
         <li>
           <a
             href="{% url 'agents:agent-list' %}"
@@ -132,7 +139,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">Agents</span>
           </a>
         </li>
+   {% endif %}   
 
+
+  {% if request.user|has_permissions:"perms_page"%}     
         <li>
           <a
             href="{% url 'permissions:permission-list' %}"
@@ -157,7 +167,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">Permissions</span>
           </a>
         </li>
+   {% endif %}   
 
+
+  {% if request.user|has_permissions:"upload"%}     
         <li>
           <a
             href="{% url 'leads:leads-upload' %}"
@@ -182,7 +195,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">Upload</span>
           </a>
         </li>
+   {% endif %}   
 
+
+  {% if request.user|has_permissions:"api"%}     
         <li>
           <a
             href="{% url 'leads:add-sheet' %}"
@@ -207,6 +223,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">API</span>
           </a>
         </li>
+   {% endif %}   
+
+
+  {% if request.user|has_permissions:"tags"%}     
         <li>
           <a
             href="{% url 'leads:add-tag' %}"
@@ -231,7 +251,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">Tags</span>
           </a>
         </li>
+   {% endif %}   
 
+
+  {% if request.user|has_permissions:"reports"%}     
         <li>
           <a
             href="{% url 'leads:stats_filter' %}"
@@ -256,7 +279,10 @@
             <span class="ml-2 text-sm tracking-wide truncate">Reports</span>
           </a>
         </li>
+   {% endif %}   
 
+
+  {% if request.user|has_permissions:"sales_survey"%}     
         <li>
           <a
             href="{% url 'leads:sales-report-list' %}"
@@ -283,7 +309,6 @@
             >
           </a>
         </li>
-
         {% endif %}
       </ul>
       <div class="object-none object-bottom">
