@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load tailwind_filters %}
-
+{% load agent_tags %}
 {% block content %}
 
 
@@ -30,7 +30,7 @@
 </svg>
                         Category
                     </a>
-
+{% if request.user|has_permissions:"edit_leads"%}        
             {% if request.user.is_organisor %}     
                     <a href="{% url 'leads:lead-update' lead.pk %}" class="mr-3 rounded-3xl bg-blue-600 text-center justify-center items-center flex flex-grow text-white py-2 text-lg px-1">
 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -38,7 +38,7 @@
 </svg>
                         Edit
                     </a>
-
+        {% endif %}
                 </div>
                 <div class="mt-11">
                             <form form method="post" class="grid gap-1 grid-cols-2  flex flex-wrap">
