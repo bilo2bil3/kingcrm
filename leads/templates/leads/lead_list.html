@@ -123,9 +123,11 @@
 {% if request.user|has_permissions:"edit_leads"%}        
                         <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Edit
+                            </th>
                             <br>
-{% endif %}
+                            {% endif %}
                         </tr>
+
                     </thead>
                     <tbody>
                         {# {% for lead in leads %} #}
