@@ -85,11 +85,12 @@
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Service
                             </th>
-{% if request.user|has_permissions:"phone_number"%}    
+
                             <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Phone
                             </th>
-    {% endif %}   
+
+
 {% if request.user|has_permissions:"whatsapp"%}    
                             <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Whatsapp
@@ -100,6 +101,7 @@
                             <a class="text-gray-400 hover:text-blue-500" href="{{ country_url_asc }}">&#9650;</a>
                             <a class="text-gray-400 hover:text-blue-500" href="{{ country_url_desc }}">&#9660;</a>
                             </th>
+
  {% if request.user.is_organisor %} 
                             <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
                             Agent
