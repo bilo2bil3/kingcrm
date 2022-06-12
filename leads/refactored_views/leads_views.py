@@ -56,8 +56,14 @@ class LeadUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_queryset(self):
         user = self.request.user
+        if user.is_organisor:
+            queryset = Lead.objects.filter(organisation=user.userprofile)
+        else:
+            queryset = Lead.objects.filter(organisation=user.agent.organisation)
+            # filter for the agent that is logged in
+            queryset = queryset.filter(agent__user=user)
         # initial queryset of leads for the entire organisation
-        return Lead.objects.filter(organisation=user.userprofile)
+        return queryset
 
     def form_valid(self, form):
         form.save()
