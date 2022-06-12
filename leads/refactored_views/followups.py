@@ -44,7 +44,7 @@ class FollowUpUpdateView(LoginRequiredMixin, generic.UpdateView):
         return reverse("leads:lead-detail", kwargs={"pk": self.get_object().lead.id})
 
 
-class FollowUpDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
+class FollowUpDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "leads/followup_delete.html"
 
     def get_success_url(self):

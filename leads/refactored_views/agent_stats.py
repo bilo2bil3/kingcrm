@@ -1,18 +1,18 @@
 import datetime
 from django.views import generic
-from agents.mixins import OrganisorAndLoginRequiredMixin
+from agents.mixins import OrganisorAndLoginRequiredMixin, LoginRequiredMixin
 from leads import stats, exporter
 from leads.forms import StatsFilterForm
 from leads.models import Agent
 from leads.utils import add_query_string
 
 
-class StatsFilterView(OrganisorAndLoginRequiredMixin, generic.FormView):
+class StatsFilterView(LoginRequiredMixin, generic.FormView):
     form_class = StatsFilterForm
     template_name = "leads/stats_filter.html"
 
 
-class StatsListView(OrganisorAndLoginRequiredMixin, generic.ListView):
+class StatsListView(LoginRequiredMixin, generic.ListView):
     template_name = "leads/stats_list.html"
 
     def get_queryset(self):

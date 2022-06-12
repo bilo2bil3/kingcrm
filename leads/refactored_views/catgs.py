@@ -48,7 +48,7 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
         return queryset
 
 
-class CategoryCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+class CategoryCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "leads/category_create.html"
     form_class = CategoryModelForm
     success_url = reverse_lazy("leads:category-list")
@@ -58,7 +58,7 @@ class CategoryCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class CategoryDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
+class CategoryDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "leads/category_delete.html"
     success_url = reverse_lazy("leads:category-list")
 
@@ -72,7 +72,7 @@ class CategoryDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
         return queryset
 
 
-class CategoryUpdateView(OrganisorAndLoginRequiredMixin, generic.UpdateView):
+class CategoryUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = "leads/category_update.html"
     form_class = CategoryModelForm
     success_url = reverse_lazy("leads:category-list")

@@ -1,10 +1,10 @@
 from django.views import generic
 from django.urls import reverse_lazy
 from leads.models import LeadsSheet
-from agents.mixins import OrganisorAndLoginRequiredMixin
+from agents.mixins import OrganisorAndLoginRequiredMixin, LoginRequiredMixin
 
 
-class SheetCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+class SheetCreateView(LoginRequiredMixin, generic.CreateView):
     model = LeadsSheet
     fields = ("source", "url", "sheet_name")
     template_name = "leads/add-sheet.html"
@@ -20,7 +20,7 @@ class SheetCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
         return super().get_context_data(**kwargs)
 
 
-class SheetDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
+class SheetDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = LeadsSheet
     success_url = reverse_lazy("leads:add-sheet")
     template_name = "leads/delete-sheet.html"

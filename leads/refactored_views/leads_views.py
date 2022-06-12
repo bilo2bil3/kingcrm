@@ -49,7 +49,7 @@ class LeadCreateView(PermissionAndLoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-class LeadUpdateView(OrganisorAndLoginRequiredMixin, generic.UpdateView):
+class LeadUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = "leads/lead_update.html"
     form_class = LeadModelForm
     success_url = reverse_lazy("leads:lead-list")

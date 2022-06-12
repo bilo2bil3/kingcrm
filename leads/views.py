@@ -271,7 +271,7 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class AssignAgentView(OrganisorAndLoginRequiredMixin, generic.FormView):
+class AssignAgentView(LoginRequiredMixin, generic.FormView):
     template_name = "leads/assign_agent.html"
     form_class = AssignAgentForm
 

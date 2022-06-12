@@ -4,7 +4,7 @@ from leads.models import Tag
 from agents.mixins import OrganisorAndLoginRequiredMixin
 
 
-class TagCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
+class TagCreateView(LoginRequiredMixin, generic.CreateView):
     model = Tag
     fields = ("name",)
     template_name = "leads/add-tag.html"
@@ -15,7 +15,7 @@ class TagCreateView(OrganisorAndLoginRequiredMixin, generic.CreateView):
         return super().get_context_data(**kwargs)
 
 
-class TagDeleteView(OrganisorAndLoginRequiredMixin, generic.DeleteView):
+class TagDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Tag
     success_url = reverse_lazy("leads:add-tag")
     template_name = "leads/delete-tag.html"

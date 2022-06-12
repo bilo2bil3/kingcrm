@@ -1,11 +1,11 @@
 from django.views import generic
 from django.urls import reverse_lazy
-from agents.mixins import OrganisorAndLoginRequiredMixin
+from agents.mixins import OrganisorAndLoginRequiredMixin, LoginRequiredMixin
 from leads.forms import SalesReportForm
 from leads.models import SalesReport
 
 
-class SalesReportCreateView(OrganisorAndLoginRequiredMixin, generic.FormView):
+class SalesReportCreateView(LoginRequiredMixin, generic.FormView):
     """display a form to select an agent, a year, a month and some questions
     that are used to evaluate agent performance.
     """
@@ -31,13 +31,13 @@ class SalesReportCreateView(OrganisorAndLoginRequiredMixin, generic.FormView):
         return super().form_valid(form)
 
 
-class SalesReportListView(OrganisorAndLoginRequiredMixin, generic.ListView):
+class SalesReportListView(LoginRequiredMixin, generic.ListView):
     model = SalesReport
     context_object_name = "reports"
     template_name = "leads/salesreport_list.html"
 
 
-class SalesReportDetailView(OrganisorAndLoginRequiredMixin, generic.DetailView):
+class SalesReportDetailView(LoginRequiredMixin, generic.DetailView):
     model = SalesReport
     context_object_name = "report"
     template_name = "leads/salesreport_detail.html"

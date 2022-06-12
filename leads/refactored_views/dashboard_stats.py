@@ -18,7 +18,7 @@ class DashboardFormView(LoginRequiredMixin, generic.FormView):
     template_name = "leads/dashboard_form.html"
 
 
-class DashboardListView(OrganisorAndLoginRequiredMixin, generic.ListView):
+class DashboardListView(LoginRequiredMixin, generic.ListView):
     """display/export stats for each catg, total leads
     and converted leads during a specific period."""
 
