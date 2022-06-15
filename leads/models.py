@@ -23,7 +23,9 @@ class LeadManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset()
 
-
+def get_default_category():
+        return Category.objects.filter(name='Unassigned').first().id
+    
 class Lead(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
@@ -37,9 +39,8 @@ class Lead(models.Model):
     category = models.ForeignKey(
         "Category",
         related_name="leads",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
+        default=get_default_category,
+        on_delete=models.PROTECT,
     )
     description = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
