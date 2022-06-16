@@ -27,11 +27,11 @@ def get_default_category():
         return Category.objects.filter(name='Unassigned').first().id
     
 class Lead(models.Model):
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    source = models.CharField(max_length=64, default="")
-    service = models.CharField(max_length=64, default="")
-    age = models.IntegerField(default=0)
+    first_name = models.CharField(max_length=50, blank=True)
+    last_name = models.CharField(max_length=50, blank=True)
+    source = models.CharField(max_length=64, default="", blank=True)
+    service = models.CharField(max_length=64, default="", blank=True)
+    age = models.IntegerField(default=0, blank=True)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     agent = models.ForeignKey(
         "Agent", null=True, blank=True, on_delete=models.SET_NULL, related_name="leads"
@@ -42,16 +42,16 @@ class Lead(models.Model):
         default=get_default_category,
         on_delete=models.PROTECT,
     )
-    description = models.TextField()
+    description = models.TextField(blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField()
+    phone_number = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True)
     profile_picture = models.ImageField(
         null=True, blank=True, upload_to="profile_pictures/"
     )
     converted_date = models.DateTimeField(null=True, blank=True)
-    country = models.CharField(max_length=64, default="")
-    campaign = models.CharField(max_length=64, default="")
+    country = models.CharField(max_length=64, default="", blank=True)
+    campaign = models.CharField(max_length=64, default="", blank=True)
     tags = models.ManyToManyField("Tag", related_name="leads", blank=True)
     last_called = models.DateTimeField(blank=True, null=True)
 
