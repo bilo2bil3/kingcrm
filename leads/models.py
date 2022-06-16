@@ -24,7 +24,7 @@ class LeadManager(models.Manager):
         return super().get_queryset()
 
 def get_default_category():
-        return Category.objects.filter(name='Unassigned').first().id
+        return Category.objects.filter(name='New').first().id
     
 class Lead(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
@@ -86,7 +86,7 @@ class Agent(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=30)  # New, Contacted, Converted, Unconverted
-    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    organisation = models.ManyToManyField(UserProfile)
 
     def __str__(self):
         return self.name

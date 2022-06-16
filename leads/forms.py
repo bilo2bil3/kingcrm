@@ -145,7 +145,7 @@ class SearchLeadsForm(forms.Form):
     start_date = DateField(required=False)
     end_date = DateField(required=False)
     # select input
-    agent = ModelMultiSelectField(queryset=Agent.objects.all(), required=False)
+    agent = ModelMultiSelectField(queryset=Agent.objects.all(), empty_label="Unassigned", required=False)
     category = ModelMultiSelectField(queryset=Category.objects.all(), required=False)
     source = ModelAttributeMultiSelectField("source", required=False)
     service = ModelAttributeMultiSelectField("service", required=False)

@@ -171,7 +171,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             # fks filters
             # only membership filter
             if agents:
-                queryset = queryset.filter(agent__pk__in=agents)
+                try:
+                    queryset = queryset.filter(agent__pk__in=agents)
+                except ValueError:
+                    queryset = queryset.filter(agent=None)
             if categories:
                 queryset = queryset.filter(category__pk__in=categories)
             if tags:
