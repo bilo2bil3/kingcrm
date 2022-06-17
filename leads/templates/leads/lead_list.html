@@ -7,37 +7,37 @@
 <div x-data="setup()" :class="{ 'dark': isDark }">
 <div class="max-w-none mx-auto">
 <section class="text-gray-700 body-font">
-
-        <div class="items-center">
-
-                <div class="flex flex-col text-center ">
-                <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Leads</h1>
-         {% if request.user|has_permissions:"create_category"%}   
+    <div class="items-center">
+        <div class="flex flex-col text-center ">
+            <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Leads</h1>
+            {% if request.user|has_permissions:"create_category"%}   
                 <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'leads:category-list' %}">
                     View categories
                 </a>
-                {% endif %}   
-                <br>
-
-</div>
-
-        <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200 ">
-    {% if request.user|has_permissions:"action_button"%}      
-                <div class="dropdown ">
-    <button class=" dropbtn w-full flex items-center justify-center px-8 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-700 md:py-2 md:text-lg md:px-10 sm:text-xs">Action</button>
-    <div class="dropdown-content">
-
-
-    <a href="#" id="delete-leads">Delete</a>
-        
-    <a href="{{ export_link }}">Export</a>
-    <a href="#" id="assign-leads-random">Assign Random</a>
-        
-
+            {% endif %}   
+            <br>
     </div>
-      
-</div>
-{% endif %}    
+
+    <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200 ">
+        {% if request.user|has_permissions:"action_button"%}      
+            <div class="dropdown ">
+                <button class=" dropbtn w-full flex items-center justify-center px-8 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-indigo-700 md:py-2 md:text-lg md:px-10 sm:text-xs">Action</button>
+                <div class="dropdown-content">
+                    <a href="#" id="delete-leads">Delete</a>
+                    <a href="{{ export_link }}">Export</a>
+                    <a href="#" id="assign-leads-random">Assign Random</a>
+                </div>
+            </div>
+
+            <div class="dropdown ">
+                <button class=" dropbtn w-full flex items-center justify-center px-8 py-2 border border-transparent text-base font-medium rounded-xl text-white bg-amber-600 hover:bg-gray-900 hover:text-amber-600 md:py-2 md:text-lg md:px-10 sm:text-xs"> {{ per_page }} Rows per page</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_per_page_10 }}">10</a>
+                    <a href="{{ url_per_page_20 }}">20</a>
+                    <a href="{{ url_per_page_30 }}">30</a>
+                </div>
+            </div>
+        {% endif %}    
             
                 
        {% if request.user|has_permissions:"assign_agents"%}    

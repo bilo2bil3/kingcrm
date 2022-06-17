@@ -197,6 +197,8 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                 start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 queryset = queryset.filter(date_added__date=start_date)
 
+        self.paginate_by = self.request.GET.get("per_page", self.paginate_by)
+
         # sorting
         ordering = self.request.GET.get("order_by", None)
         if ordering is None:
@@ -234,6 +236,11 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             url_asc = add_query_string(url, params1)
             url_desc = add_query_string(url, params2)
             context.update({f"{field}_url_asc": url_asc, f"{field}_url_desc": url_desc})
+
+        context.update({"url_per_page_10": add_query_string(url, {'per_page': 10}) })
+        context.update({"url_per_page_20": add_query_string(url, {'per_page': 20}) })
+        context.update({"url_per_page_30": add_query_string(url, {'per_page': 30}) })
+        context.update({'per_page': self.paginate_by})
 
         # add pagination links
         page_obj = context["page_obj"]
