@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for sheet in LeadsSheet.objects.all():
             sheet_id = sheet.url.split('d/')[-1].split('/')[0]
-            sheet_range = f'{sheet.sheet_name}!A:H'
+            sheet_range = f'{sheet.sheet_name}!A:I'
 
             url = self.ENDPOINT_URL.format(sheet_id, sheet_range)
             r = requests.get(url, params=self.PARAMS)
@@ -29,13 +29,15 @@ class Command(BaseCommand):
             # we need to keep track of leads added for current session
             leads_to_add = []
             for row in rows:
-                if row[5] in [lead[5] for lead in leads_to_add]:
+                if row[5] + row[6] in [lead[5] + lead[6] for lead in leads_to_add]:
                     continue
                 leads_to_add.append(row)
             
             for lead in leads_to_add:
-                [first_name, last_name, source, service, email, phone_number, country, campaign] = lead
+                [first_name, last_name, source, service, email, country_code, phone_number, country, campaign] = lead
 
+                phone_number = country_code + phone_number
+                
                 # skip duplicate leads
                 # if new lead exist in db
                 if phone_number in Lead.objects.values_list('phone_number', flat=True):
