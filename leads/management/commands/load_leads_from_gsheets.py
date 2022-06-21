@@ -1,6 +1,7 @@
 import requests
 import environ
 from django.core.management.base import BaseCommand
+from leads.management.commands.utils import add_leads
 from leads.models import Lead, LeadsSheet
 
 
@@ -32,26 +33,30 @@ class Command(BaseCommand):
                 if row[5] + row[6] in [lead[5] + lead[6] for lead in leads_to_add]:
                     continue
                 leads_to_add.append(row)
-            
-            for lead in leads_to_add:
-                [first_name, last_name, source, service, email, country_code, phone_number, country, campaign] = lead
+            print(sheet.random)
+            if sheet.random:
+                add_leads(assign_randomly=True, organisation=sheet.organisation, leads_to_add=leads_to_add)
+            else:
+                add_leads(organisation=sheet.organisation, leads_to_add=leads_to_add, agent=sheet.agent)
+            # for lead in leads_to_add:
+            #     [first_name, last_name, source, service, email, country_code, phone_number, country, campaign] = lead
 
-                phone_number = country_code + phone_number
+            #     phone_number = country_code + phone_number
                 
-                # skip duplicate leads
-                # if new lead exist in db
-                if phone_number in Lead.objects.values_list('phone_number', flat=True):
-                    continue
+            #     # skip duplicate leads
+            #     # if new lead exist in db
+            #     if phone_number in Lead.objects.values_list('phone_number', flat=True):
+            #         continue
 
-                Lead.objects.create(
-                    first_name=first_name,
-                    last_name=last_name,
-                    source=source,
-                    service=service,
-                    email=email,
-                    phone_number=phone_number,
-                    country=country,
-                    campaign=campaign,
-                    organisation=sheet.organisation,
-                    agent=sheet.agent
-                )
+            #     Lead.objects.create(
+            #         first_name=first_name,
+            #         last_name=last_name,
+            #         source=source,
+            #         service=service,
+            #         email=email,
+            #         phone_number=phone_number,
+            #         country=country,
+            #         campaign=campaign,
+            #         organisation=sheet.organisation,
+            #         agent=sheet.agent
+            #     )

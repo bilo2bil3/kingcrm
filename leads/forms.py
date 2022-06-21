@@ -49,6 +49,27 @@ class LeadForm(forms.Form):
     last_name = forms.CharField()
     source = forms.CharField()
 
+class LeadsSheetForm(forms.ModelForm):
+    # agent = ModelMultiSelectField(queryset=Agent.objects.all(), required=False)
+    random = forms.BooleanField(required=False)
+    
+    class Meta:
+        model = LeadsSheet
+        fields = ("source", "url", "sheet_name", "agent", "random")
+    
+    # def __init__(self, *args, **kwargs):
+    #     # request = kwargs.pop("request")
+    #     super(LeadsSheetForm, self).__init__(*args, **kwargs)
+    #     self.fields["agent"] = forms.MultipleChoiceField(
+    #         choices=self.get_agents(),
+    #         required=False,
+    #         widget=forms.SelectMultiple(attrs={"multiple": "multiple"}),
+    #     )
+    
+    # def get_agents(self):
+    #     return [("", "------")] + [
+    #         (agent.pk, agent) for agent in Agent.objects.all()
+    #     ]
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

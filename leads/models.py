@@ -113,6 +113,7 @@ class LeadsSheet(models.Model):
     sheet_name = models.CharField(max_length=64)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     agent = models.ForeignKey("Agent", blank=True, null=True, on_delete=models.CASCADE)
+    random = models.BooleanField(blank=True, null=True)
 
     def __str__(self):
         return self.url

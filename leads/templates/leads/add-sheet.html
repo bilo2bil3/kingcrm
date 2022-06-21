@@ -1,85 +1,151 @@
-{% extends "base.html" %}
-{% load tailwind_filters %}
+{% extends "base.html" %} {% load tailwind_filters %} {% block content %}
 
-{% block content %}
+<section
+  class="text-gray-700 body-font items-center justify-center text-center"
+>
+  <div class="h-full mb-10 items-center justify-center">
+    <div class="items-center justify-center">
+      <div class="flex flex-col text-center">
+        <h1 class="text-4xl text-center text-[#004aad] font-extrabold">
+          Connect Google Sheets
+        </h1>
 
-<section class=" text-gray-700 body-font items-center justify-center text-center">
-  <div class="h-full mb-10 items-center justify-center ">
-        <div class="items-center justify-center ">
-
-                <div class="flex flex-col text-center ">
-                <h1 class="text-4xl text-center text-[#004aad] font-extrabold">Connect Google Sheets</h1>
-        
-                <a class="text-gray-500 dark:text-gray-200 hover:text-blue-500" href="{% url 'leads:lead-list' %}">
-                    Go back to leads
-                </a><br>
-</div>
-        </div>
-        <div class="w-full mb-10 text-center mt-14">
-            <form method="post" class="gap-x-2.5 flex flex-wrap mt-5 items-center justify-center ">
-        {% csrf_token %}
-        {{ form|crispy }}
+        <a
+          class="text-gray-500 dark:text-gray-200 hover:text-blue-500"
+          href="{% url 'leads:lead-list' %}"
+        >
+          Go back to leads </a
+        ><br />
+      </div>
+    </div>
+    <div class="w-full mb-10 text-center mt-14">
+      <form
+        method="post"
+        class="gap-x-3 flex flex-wrap mt-5 items-center justify-center"
+      >
+        {% csrf_token %} {{ form|crispy }}
         <div class="w-full">
-        <button type='submit' class="w-1/4 text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
+          <button
+            type="submit"
+            class="w-1/4 text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md"
+          >
             Connect
-        </button>
+          </button>
         </div>
-    </form>
-</div>
-        <div class="flex flex-col ">
-            <div class="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
-            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                <div class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg   ">
-                <table class="min-w-full divide-y 1/2">
-                    <thead class="bg-gray-50" >
-                        <tr>
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                            Source 
-                            </th>
+      </form>
+    </div>
+    <div class="flex flex-col">
+      <div class="my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+          <div
+            class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg"
+          >
+            <table class="min-w-full divide-y 1/2">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900 gap-x-2.5 uppercase tracking-wider"
+                  >
+                    Source
+                  </th>
 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                            Url 
-                            </th>
+                  <th
+                    scope="col"
+                    class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900 gap-x-2.5 uppercase tracking-wider"
+                  >
+                    Url
+                  </th>
 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                        Sheet name
-                        </th>
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
-                        Delete
-                        </th>
-                        </tr>
-                    </thead>
-        
-<tbody>
+                  <th
+                    scope="col"
+                    class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900 gap-x-2.5 uppercase tracking-wider"
+                  >
+                    Sheet name
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900 gap-x-2.5 uppercase tracking-wider"
+                  >
+                    Delete
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
                 {% for sheet in sheets %}
-                            <tr class="bg-gray-100 dark:bg-gray-900 text-center">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400">
-                                    <a class="text-blue-800 dark:text-indigo-600 hover:text-blue-800">{{ sheet.source }}</a>
-                                </td>
+                <tr class="bg-gray-100 dark:bg-gray-900 text-center">
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400"
+                  >
+                    <a
+                      class="text-blue-800 dark:text-indigo-600 hover:text-blue-800"
+                      >{{ sheet.source }}</a
+                    >
+                  </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
-                            {{ sheet.url }}
-                                </td>
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center"
+                  >
+                    {{ sheet.url }}
+                  </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
-                                {{ sheet.sheet_name }}
-                                </td>
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center"
+                  >
+                    {{ sheet.sheet_name }}
+                  </td>
 
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                                    <a href="{% url 'leads:delete-sheet' sheet.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
-                                        Delete
-                                    </a>
-                                </td>
+                  <td
+                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center"
+                  >
+                    <a
+                      href="{% url 'leads:delete-sheet' sheet.pk %}"
+                      class="text-blue-800 dark:text-gray-200 hover:text-indigo-900"
+                    >
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+                {%endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                            </tr>
-     {%endfor %}
-                    </tbody>
-                </table>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function() {
+    for (let field of ['agent']) {
+        $(`select[name="${field}"]`).select2();
+    }
+  });
+    {% comment %} agent_options = document.getElementsByName('agent')[0]
+    multi_agent = document.getElementById('div_id_agent_names')
+    agent = document.getElementById('div_id_agent_name')
+    multi_agent.style.display = 'none'
+    agent.style.display = 'none'
 
+    agent_options.addEventListener('change', ()=>{
+      if (agent_options.value === 'multi-agent'){
+        multi_agent.style.display = ''
+        agent.style.display = 'none'
+      }
+      else if (agent_options.value === 'agent'){
+        agent.style.display = ''
+        multi_agent.style.display = 'none'
+      }
+      else{
+        agent.style.display = 'none'
+        multi_agent.style.display = 'none'
+      }
+    }) {% endcomment %}
 
-</div></div></div></div></div>
-    </section> 
-
-
+</script>
 
 {% endblock content %}

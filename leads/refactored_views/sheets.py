@@ -1,12 +1,14 @@
 from django.views import generic
 from django.urls import reverse_lazy
+from leads.forms import LeadsSheetForm
 from leads.models import LeadsSheet
 from agents.mixins import OrganisorAndLoginRequiredMixin, LoginRequiredMixin
 
 
 class SheetCreateView(LoginRequiredMixin, generic.CreateView):
-    model = LeadsSheet
-    fields = ("source", "url", "sheet_name")
+    # model = LeadsSheet
+    # fields = ("source", "url", "sheet_name")
+    form_class = LeadsSheetForm
     template_name = "leads/add-sheet.html"
     # success_url = reverse_lazy('leads:lead-list')
     success_url = reverse_lazy("leads:add-sheet")
