@@ -12,7 +12,7 @@ class ScheduleListView(LoginRequiredMixin, generic.ListView):
     template_name = "schedule_list.html"
     
     def get_queryset(self):
-        return Schedule.objects.all()
+        return Schedule.objects.filter(user=self.request.user)
     
 class ScheduleCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "schedule_create.html"
@@ -27,7 +27,7 @@ class ScheduleCreateView(LoginRequiredMixin, generic.CreateView):
     def post(self, request, *args, **kwargs):
         data = request.POST
         lead = Lead.objects.get(pk=data['lead'])
-        reminder = Schedule(lead=lead, title=data['title'], date=data['date'], time=data['time'])
+        reminder = Schedule(lead=lead, title=data['title'], date=data['date'], time=data['time'], user=request.user)
         reminder.save()
         return HttpResponseRedirect(self.get_success_url())
 

@@ -10,15 +10,10 @@ class Schedule(models.Model):
     title = models.CharField(max_length=30)
     date = models.DateField()
     time = models.TimeField()
+    user = models.ForeignKey(User, related_name='schedule', on_delete=models.CASCADE, default=1)
     
     def __str__(self) -> str:
         return self.title
-    
-    def save(self, *args, **kwargs):
-        # self.time = datetime.datetime.strftime(self.time, "%Y-%m-%dT%H:%M")
-        if datetime.datetime.strptime(self.date, "%Y-%m-%d").date() < datetime.date.today():
-            raise ValidationError("The date cannot be in the past!")
-        super(Schedule, self).save(*args, **kwargs)
 
 class ReminderNotification(models.Model):
     user = models.ForeignKey(User, related_name='reminder_notifications', on_delete=models.CASCADE)

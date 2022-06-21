@@ -29,7 +29,7 @@ class FollowUpCreateView(LoginRequiredMixin, generic.CreateView):
         
         if data.get('is_reminder') == 'true':
             lead = Lead.objects.get(pk=kwargs['pk'])
-            schedule = Schedule.objects.create(lead=lead, title=data['title'], date=data['date'], time=data['time'])
+            schedule = Schedule.objects.create(lead=lead, title=data['title'], date=data['date'], time=data['time'], user=request.user)
             notification = ReminderNotification.objects.create(
                 user=request.user,
                 lead=lead,
