@@ -7,8 +7,10 @@ from .custom_form_fields import (
     DateField,
     ModelMultiSelectField,
     ModelAttributeMultiSelectField,
+    TimeField,
 )
 from . import models
+from schedule.models import Schedule
 
 User = get_user_model()
 
@@ -29,6 +31,10 @@ class LeadModelForm(forms.ModelForm):
             "email",
             # "profile_picture",
         )
+    def init(self, *args, **kwargs):
+        super(LeadModelForm, self).init(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'text-white'
 
     def clean_first_name(self):
         data = self.cleaned_data["first_name"]
@@ -138,10 +144,19 @@ class CategoryModelForm(forms.ModelForm):
 
 
 class FollowUpModelForm(forms.ModelForm):
+    title = forms.CharField(max_length=30, required=False)
+    date = DateField(required=False)
+    time = TimeField(required=False)
     class Meta:
         model = FollowUp
         fields = ("notes", "file")
+    
+    field_order = ['title', 'date', 'time']
 
+class ReminderForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ("title", "date", "time")
 
 class UploadLeadsForm(forms.Form):
     # TODO: how to enable accept attribute?

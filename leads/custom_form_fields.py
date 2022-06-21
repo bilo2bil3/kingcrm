@@ -6,6 +6,8 @@ from .models import Lead
 class DateInput(forms.DateInput):
     input_type = "date"
 
+class TimeInput(forms.TimeInput):
+    input_type = "time"
 
 class SelectMultiple(forms.SelectMultiple):
     # TODO: why must add multiple attrb here?
@@ -22,6 +24,8 @@ class SelectMultiple(forms.SelectMultiple):
 class DateField(forms.DateField):
     widget = DateInput
 
+class TimeField(forms.TimeField):
+    widget = TimeInput
 
 class ModelMultiSelectField(forms.ModelChoiceField):
     widget = SelectMultiple

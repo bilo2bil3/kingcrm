@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load tailwind_filters %}
+{% load static %}
 
 {% block content %}
 
@@ -8,13 +9,17 @@
     <div class="py-5 border-t border-gray-200">
         <h1 class="text-4xl text-gray-800">Create a new followup</h1>
     </div>
+    <button id='show-reminder-fields' class="w-1/2 text-white bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-md">Add a reminder</button>
+    <button id='hide-reminder-fields' class="w-1/2 text-white bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-md">Cancel reminder</button>
     <form method="post" class="mt-5" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy }}
+        <input id="is_reminder" name="is_reminder" type="hidden" />
         <button type='submit' class="w-full text-white bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded-md">
             Submit
         </button>
     </form>
 </div>
+<script src="{% static 'js/add-or-remove-reminder.js' %}"></script>
 
 {% endblock content %}

@@ -25,6 +25,7 @@ urlpatterns = [
     path("leads/", include("leads.urls", namespace="leads")),
     path("agents/", include("agents.urls", namespace="agents")),
     path("permissions/", include("permissions.urls", namespace="permissions")),
+    path("schedule/", include("schedule.urls", namespace="schedule")),
     path("signup/", SignupView.as_view(), name="signup"),
     path("reset-password/", PasswordResetView.as_view(), name="reset-password"),
     path(
