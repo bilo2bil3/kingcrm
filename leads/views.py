@@ -48,6 +48,9 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "leads"
     paginate_by = 7
 
+
+
+
     # override default get method
     # to handle both cases of:
     # generate leads csv or view leads
