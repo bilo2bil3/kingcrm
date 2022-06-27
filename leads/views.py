@@ -242,6 +242,9 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
         context.update({"url_per_page_100": add_query_string(url, {'per_page': 100}) })
         context.update({"url_per_page_250": add_query_string(url, {'per_page': 250}) })
         context.update({'per_page': self.paginate_by})
+        
+        context.update({"start_date": self.request.GET.get('start_date')})
+        context.update({"end_date": self.request.GET.get('end_date')})
 
         # add pagination links
         page_obj = context["page_obj"]
