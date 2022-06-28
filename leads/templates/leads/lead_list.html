@@ -48,7 +48,7 @@
                             </button>
                         </div>
                         <div id="assign-leads-view-2">
-                            <select multiple name="agent-to-assign" id="agent-to-assign" class="appearance-none w-1/2 bg-gray-200 border border-gray-200 text-gray-700 py-3 px-3 pr-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" style="width: 100% !important;">
+                            <select multiple name="agent-to-assign" id="agent-to-assign" class="appearance-none w-1/2 bg-gray-200 border border-gray-200 text-gray-700 py-3 px-6 pr-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" style="width: 100% !important;">
                                 {% for agent in agents %}
                                 <option value="{{ agent.pk }}">
                                     {{ agent.user.first_name }} {{ agent.user.last_name }}
@@ -56,10 +56,10 @@
                                 {% endfor %}
                             </select>
                             <br>
-                            <button id="assign-leads" class="mt-3 text-white bg-indigo-500 border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded">
+                            <button id="assign-leads" class="mt-3 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
                                 Assign
                             </button>
-                            <button id="hide-assign-leads" class="mt-3 text-white bg-red-500 border-0 py-2 px-3 focus:outline-none hover:bg-red-600 rounded">
+                            <button id="hide-assign-leads" class="mt-3 text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
                                 Cancel
                             </button>
                         </div>
@@ -75,66 +75,66 @@
             <p>Found {{ leads.count }} leads</p>
         </div>
 
-        <div class="flex flex-col w-full">
-            <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                <div class="shadow overflow-hidden border-b border-blue-600 sm:rounded-lg">
-                <table class="min-w-full divide-y">
+        <div class="flex flex-col w-full justify-center items-center ">
+            <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 ">
+            <div class="  py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                <div class=" shadow overflow-hidden border-b border-blue-600 sm:rounded-lg">
+                <table class="divide-y">
                     <thead class="bg-gray-50" >
                         <tr>
 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            <th scope="col" class="  text-centre text-xs font-medium text-white bg-blue-800 rounded-tl-2xl ">
                             <input type="checkbox" name="select-all" id="select-all" title="Select all leads">
                             </th>
 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider ">
+                            <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800   gap-x-2.5  font-bold  uppercase tracking-wider">
                             Name
                             </th>
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800   gap-x-2.5  font-bold  uppercase tracking-wider">
                             Source
                             </th>
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800   gap-x-2.5  font-bold  uppercase tracking-wider">
                             Service
                             </th>
 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            <th scope="col" class=" px-6 py-3 text-centre text-xs  text-white  bg-blue-800   gap-x-2.5  font-bold  uppercase tracking-wider">
                             Phone
                             </th>
 
 
 {% if request.user|has_permissions:"whatsapp"%}    
-                            <th scope="col" class="px-8 py-3 text-centre text-xs  font-medium   text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800   gap-x-2.5  font-bold  uppercase tracking-wider ">
                             Whatsapp
                             </th>
 {% endif %}
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                          <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800   gap-x-2.5  font-bold  uppercase tracking-wider">
                             Country
                             <a class="text-gray-400 hover:text-blue-500" href="{{ country_url_asc }}">&#9650;</a>
                             <a class="text-gray-400 hover:text-blue-500" href="{{ country_url_desc }}">&#9660;</a>
                             </th>
 
- {% if request.user.is_organisor %} 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+
+                            <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800   gap-x-0  font-bold  uppercase tracking-wider ">
                             Agent
                             <a class="text-gray-400 hover:text-blue-500" href="{{ agent_url_asc }}">&#9650;</a>
                             <a class="text-gray-400 hover:text-blue-500" href="{{ agent_url_desc }}">&#9660;</a>
                             </th>
-      {% endif %}
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+
+                            <th scope="col" class=" px-6 py-4 text-centre text-xs  text-white  bg-blue-800    font-bold  uppercase tracking-wider">
                             Category
-                            <br>
+                          
                             <a class="text-gray-400 hover:text-blue-500" href="{{ category_url_asc }}">&#9650;</a>
                             <a class="text-gray-400 hover:text-blue-500" href="{{ category_url_desc }}">&#9660;</a>
                             </th>
 
-                            <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-4 text-centre text-xs  text-white  bg-blue-800    font-bold  uppercase tracking-wider">
                             Date
                             <a class="text-gray-400 hover:text-blue-500" href="{{ date_url_asc }}">&#9650;</a>
                             <a class="text-gray-400 hover:text-blue-500" href="{{ date_url_desc }}">&#9660;</a>
                             </th>
 
 {% if request.user|has_permissions:"edit_leads"%}        
-                        <th scope="col" class="px-8 py-3 text-centre text-xs font-medium text-white bg-blue-800 dark:bg-gray-900  gap-x-2.5  uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-4 text-centre text-xs  text-white  bg-blue-800    font-bold  uppercase tracking-wider rounded-tr-2xl">
                             Edit
                             </th>
                             <br>
@@ -146,61 +146,59 @@
                         {# {% for lead in leads %} #}
                         {% for lead in page_obj %}
                             <tr class="bg-gray-100 dark:bg-gray-900">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400 text-center ">
+                                <td class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-400 text-center ">
                                     <input class='select-lead' type="checkbox" value="{{ lead.id }}">
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400">
-                                    <a class="text-blue-800 dark:text-indigo-600 hover:text-blue-800" href="{% url 'leads:lead-detail' lead.pk %}">{{ lead.first_name }}  {{ lead.last_name }}</a>
+                                <td class=" px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-400">
+                                    <a class="text-blue-800 hover:text-blue-800" href="{% url 'leads:lead-detail' lead.pk %}">{{ lead.first_name }}  {{ lead.last_name }}</a>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200  text-center ">
+                                <td class=" px-6 py-4 whitespace-nowrap text-sm text-gray-600   text-center ">
                                     {{ lead.source }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
+                                <td class=" px-6 py-4 whitespace-nowrap text-sm text-gray-600  text-center ">
                                     {{ lead.service }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
+                                <td class=" px-6 py-4 whitespace-nowrap text-sm text-gray-600  text-center ">
 {% if request.user|has_permissions:"phone_number"%}    
 
                                         {{ lead.phone_number }}
                                         <br>
 {% endif %}
-                                    <button class="click2call-call mt-3 text-white dark:bg-blue-800 bg-blue-800  border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
+                                    <button class="click2call-call mt-3 text-white dark:bg-blue-800 bg-blue-800  border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
                                         call
                                     </button>
-                                    <button class="click2call-hangup mt-3 text-white bg-red-500 border-0 py-2 px-3 focus:outline-none hover:bg-red-600 rounded">
+                                    <button class="click2call-hangup mt-3 text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
                                         hangup
                                     </button>
                                 </td>
 {% if request.user|has_permissions:"whatsapp"%}    
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
+    <td class=" px-6 py-4 whitespace-nowrap text-sm text-gray-600  text-center ">
 
                                         <a class="" target="_blank" href="https://api.whatsapp.com/send?phone={{ lead.phone_number }}">
-                                    <button class="mt-3 text-white dark:bg-blue-800 bg-green-600  border-0 py-2 px-3 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
+                                    <button class="mt-3 text-white dark:bg-blue-800 bg-green-600  border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" data-firstname="{{lead.first_name}}" data-lastname="{{lead.last_name}}" data-lead="{{lead.pk}}">
                                         Whatsapp
                                     </button>
                                         </a> 
                                 </td>
 {% endif %}
 
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
+                                <td class=" px-6 py-4 whitespace-nowrap text-sm text-gray-600  text-center ">
                                     {{ lead.country }}
                                 </td>
- {% if request.user.is_organisor %}    
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-200 text-center ">
+                                <td class=" px-6 py-4 whitespace-nowrap text-sm text-gray-600  text-center ">
                                     {% if lead.agent %}
                                         {{ lead.agent.user.first_name }} {{ lead.agent.user.last_name }}
                                     {% else %}
                                         Unassigned
                                     {% endif %}
                                 </td>
- {% endif %}
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 ">
                                     {% if lead.category %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 text-center ">
+                                        <span class=" text-xs  font-semibold rounded-full bg-blue-200 text-blue-800">
                                             {{ lead.category.name }}
                                         </span>
                                     {% else %}
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 text-center ">
+                                        <span class=" text-xs  font-semibold rounded-full bg-gray-100 text-gray-800 ">
                                             New
                                         </span>
                                     {% endif %}
@@ -212,12 +210,12 @@
                                         </span>
                                     {% endfor %}
                                 </td> -->
-                                <td class="px-6 py-4 whitespace-nowrap text-sm  text-gray-600 dark:text-gray-200 text-center ">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm  text-gray-600  text-center ">
                                     {{ lead.date_added }}
                                 </td>
 {% if request.user|has_permissions:"edit_leads"%}
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="{% url 'leads:lead-update' lead.pk %}" class="text-blue-800 dark:text-gray-200 hover:text-indigo-900">
+                                <td class=" px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{% url 'leads:lead-update' lead.pk %}" class="text-blue-800  hover:text-indigo-900">
                                         Edit
                                     </a>
                                 </td>

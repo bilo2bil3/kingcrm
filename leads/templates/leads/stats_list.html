@@ -16,12 +16,12 @@
     </p>
   </div>
   <!-- <div class="lg:w-2/3 w-full mx-auto overflow-auto"></div> -->
-  <div class="w-full mx-auto overflow-auto flex justify-between">
+  <div class="gap-32 flex justify-between">
     {% for agent in data %}
-      <table class="table-auto w-full text-left whitespace-no-wrap">
+      <table class="text-left">
         {% for k,v in agent.items %}
         <tr>
-          <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl">{{ k|upper }}</th>
+          <th class="px-6 py-3  font-medium text-white text-sm bg-blue-800 ">{{ k|upper }}</th>
           <td class="px-4 py-3">{{ v }}</td>
         </tr>
         {% endfor %}
