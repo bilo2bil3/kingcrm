@@ -70,6 +70,7 @@ class FollowUp(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
     file = models.FileField(null=True, blank=True, upload_to=handle_upload_follow_ups)
+    
 
     def __str__(self):
         return f"{self.lead.first_name} {self.lead.last_name}"

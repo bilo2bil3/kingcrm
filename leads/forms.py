@@ -147,6 +147,7 @@ class FollowUpModelForm(forms.ModelForm):
     title = forms.CharField(max_length=30, required=False)
     date = DateField(required=False)
     time = TimeField(required=False)
+    agent = forms.ModelChoiceField(queryset=Agent.objects.all())
     class Meta:
         model = FollowUp
         fields = ("notes", "file")
