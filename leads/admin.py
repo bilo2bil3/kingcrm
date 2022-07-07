@@ -20,8 +20,10 @@ class AgentAdmin(admin.ModelAdmin):
     fields = ['user', 'organisation', 'permissions']
     filter_horizontal = ['permissions']
 
+class CategoryAdmin(admin.ModelAdmin):
+    filter_horizontal = ['organisation']
 
-admin.site.register(Category)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(User)
 admin.site.register(UserProfile)
 admin.site.register(Lead, LeadAdmin)
