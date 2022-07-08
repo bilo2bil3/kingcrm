@@ -54,6 +54,11 @@ class Lead(models.Model):
     campaign = models.CharField(max_length=64, default="", blank=True)
     tags = models.ManyToManyField("Tag", related_name="leads", blank=True)
     last_called = models.DateTimeField(blank=True, null=True)
+    Q1 = models.TextField(blank=True)
+    Q2 = models.TextField(blank=True)
+    Q3 = models.TextField(blank=True)
+    Q4 = models.TextField(blank=True)
+    
 
     objects = LeadManager()
 

@@ -20,6 +20,9 @@ requests = "*"
 google-api-python-client = "*"
 google-auth-httplib2 = "*"
 google-auth-oauthlib = "*"
+psycopg2 = "*"
+django-celery-beat = "*"
+django-celery-results = "*"
 
 [dev-packages]
 

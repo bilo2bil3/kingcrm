@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 # CRUD+L - Create, Retrieve, Update and Delete + List
 
 
+# get all leads of all users
+
 class SignupView(generic.CreateView):
     template_name = "registration/signup.html"
     form_class = CustomUserCreationForm
@@ -77,6 +79,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                     "AGENT",
                     "CATEGORY",
                     "DATE",
+                    "Q1",
+                    "Q2",
+                    "Q3",
+                    "Q4",
                 ]
             )
             for lead in qs:
@@ -90,6 +96,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                         lead.phone_number,
                         lead.country,
                         lead.campaign,
+                        lead.q1,
+                        lead.q2,
+                        lead.q3,
+                        lead.q4,
                         (
                             f"{lead.agent.user.first_name} {lead.agent.user.last_name}"
                             if lead.agent
@@ -143,6 +153,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
             agents = self.request.GET.getlist("agent")
             categories = self.request.GET.getlist("category")
             tags = self.request.GET.getlist("tag")
+            q1 = self.request.GET.getlist("Q1")
+            q2 = self.request.GET.getlist("Q2")
+            q3 = self.request.GET.getlist("Q3")
+            q4 = self.request.GET.getlist("Q4")
             # charfields fileters
             # either membership filter (to include selected only)
             # or starts with empty str filter (to include all)
