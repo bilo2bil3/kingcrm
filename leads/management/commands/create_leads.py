@@ -21,6 +21,7 @@ class Command(BaseCommand):
                 last_name = row['last_name']
                 source = row['source']
                 email = row['email']
+                
 
                 Lead.objects.create(
                     organisation=organisation,
