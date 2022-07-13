@@ -23,9 +23,11 @@ class LeadManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset()
 
+
 def get_default_category():
-        return Category.objects.filter(name='New').first().id
-    
+    return Category.objects.filter(name="New").first().id
+
+
 class Lead(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
@@ -58,7 +60,6 @@ class Lead(models.Model):
     Q2 = models.TextField(blank=True)
     Q3 = models.TextField(blank=True)
     Q4 = models.TextField(blank=True)
-    
 
     objects = LeadManager()
 
@@ -75,7 +76,6 @@ class FollowUp(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True)
     file = models.FileField(null=True, blank=True, upload_to=handle_upload_follow_ups)
-    
 
     def __str__(self):
         return f"{self.lead.first_name} {self.lead.last_name}"
@@ -84,7 +84,9 @@ class FollowUp(models.Model):
 class Agent(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    permissions = models.ManyToManyField(Permission, related_name='agent_permissions', blank=True)
+    permissions = models.ManyToManyField(
+        Permission, related_name="agent_permissions", blank=True
+    )
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"

@@ -12,13 +12,28 @@ def partition_leads(leads, agents_count):
         for i in range(agents_count)
     ]
 
+
 def populate_db(leads_to_add, organisation, agent=None):
     """add leads to db."""
     for lead in leads_to_add:
-        [first_name, last_name, source, service, email, country_code, phone_number, country, campaign] = lead
-        
+        [
+            first_name,
+            last_name,
+            source,
+            service,
+            email,
+            country_code,
+            phone_number,
+            country,
+            campaign,
+            Q1,
+            Q2,
+            Q3,
+            Q4,
+        ] = lead
+
         phone_number = country_code + phone_number
-        
+
         # skip lead if already exists in db
         if phone_number in Lead.objects.values_list("phone_number", flat=True):
             continue
@@ -33,11 +48,16 @@ def populate_db(leads_to_add, organisation, agent=None):
             "phone_number": phone_number,
             "country": country,
             "campaign": campaign,
+            "Q1": Q1,
+            "Q2": Q2,
+            "Q3": Q3,
+            "Q4": Q4,
         }
         if agent is not None:
             fields["agent"] = agent
 
         Lead.objects.create(**fields)
+
 
 def add_leads(agent=None, assign_randomly=False, leads_to_add=[], organisation=None):
     if agent is None and assign_randomly:

@@ -23,6 +23,7 @@ google-auth-oauthlib = "*"
 psycopg2 = "*"
 django-celery-beat = "*"
 django-celery-results = "*"
+channels = "*"
 
 [dev-packages]
 
