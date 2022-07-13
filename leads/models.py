@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 
 from permissions.models import Permission
 
-
 class User(AbstractUser):
     is_organisor = models.BooleanField(default=True)
     is_agent = models.BooleanField(default=False)
@@ -70,7 +69,6 @@ class Lead(models.Model):
 def handle_upload_follow_ups(instance, filename):
     return f"lead_followups/lead_{instance.lead.pk}/{filename}"
 
-
 class FollowUp(models.Model):
     lead = models.ForeignKey(Lead, related_name="followups", on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -113,7 +111,7 @@ def post_user_created_signal(sender, instance, created, **kwargs):
 
 post_save.connect(post_user_created_signal, sender=User)
 
-### load from google sheets ###
+### load from google sheets #####
 class LeadsSheet(models.Model):
     source = models.CharField(max_length=64)
     url = models.URLField()
