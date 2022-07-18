@@ -9,12 +9,12 @@ from leads.forms import UploadLeadsForm, UploadLeadsWithAgentForm
 def filter_duplicate_rows(csv_reader):
     """
     return a list of leads to add
-    where duplicate leads (by phone number) have been removed.
+    where duplicate leads (by email) have been removed.
     """
     leads_to_add = []
     for row in csv_reader:
         # print(row)
-        if row["phone_number"] in [lead["phone_number"] for lead in leads_to_add]:
+        if row["email"] in [lead["email"] for lead in leads_to_add]:
             continue
         leads_to_add.append(row)
     return leads_to_add
@@ -24,7 +24,7 @@ def populate_db(leads_to_add, organisation, agent=None):
     """add leads to db."""
     for lead in leads_to_add:
         # skip lead if already exists in db
-        if lead["phone_number"] in Lead.objects.values_list("phone_number", flat=True):
+        if lead["email"] in Lead.objects.values_list("email", flat=True):
             continue
 
         fields = {
