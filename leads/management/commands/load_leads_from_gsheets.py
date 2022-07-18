@@ -32,7 +32,7 @@ class Command(BaseCommand):
             # we need to keep track of leads added for current session
             leads_to_add = []
             for row in rows:
-                if row[5] + row[6] in [lead[5] + lead[6] for lead in leads_to_add]:
+                if row[4] in [lead[4] for lead in leads_to_add]:
                     continue
                 leads_to_add.append(row)
             print(sheet.random)
