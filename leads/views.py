@@ -96,10 +96,10 @@ class LeadListView(LoginRequiredMixin, generic.ListView):
                         lead.phone_number,
                         lead.country,
                         lead.campaign,
-                        lead.q1,
-                        lead.q2,
-                        lead.q3,
-                        lead.q4,
+                        lead.Q1,
+                        lead.Q2,
+                        lead.Q3,
+                        lead.Q4,
                         (
                             f"{lead.agent.user.first_name} {lead.agent.user.last_name}"
                             if lead.agent
