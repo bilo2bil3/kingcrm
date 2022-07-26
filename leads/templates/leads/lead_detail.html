@@ -92,26 +92,33 @@
                 </div>
               
                 <div class="flex border-t mb-1 border-gray-300 py-2">
-                    <span class="text-blue-800 ">Q1</span>
+                    <span class="text-blue-800 ">
+هل انت مهتم بالكورس التعليمي الذي نقدمه ؟</span>
                     <span class="ml-auto text-gray-900">{{ lead.Q1 }}</span>
                 </div>
                 
                 <div class="flex border-t mb-1 border-gray-300 py-2">
-                    <span class="text-blue-800 ">Q2</span>
+                    <span class="text-blue-800 ">
+اكتب نبذة قصيره عن تجربتك في مجال التداول
+كيف بدأت و هل تجربتك جيده ام سيئة ؟
+ و ما هي توقعاتك من مجال التداول ؟
+</span>
                     <span class="ml-auto text-gray-900">{{ lead.Q2 }}</span>
                 </div>
 
                 <div class="flex border-t mb-1 border-gray-300 py-2">
-                    <span class="text-blue-800 ">Q3</span>
+                    <span class="text-blue-800 ">هل تدرك ان مجال التداول يحتاج رأس مال جيد للبدء ؟</span>
                     <span class="ml-auto text-gray-900">{{ lead.Q3 }}</span>
                 </div>
                 <div class="flex border-t mb-1 border-gray-300 py-2">
-                    <span class="text-blue-800 ">Q4</span>
+                    <span class="text-blue-800 ">هل اشتركت في اي كورس لتعليم التداول من قبل ؟ 
+اذا كانت الإجابة نعم , اشرح تجربتك</span>
                     <span class="ml-auto text-gray-900">{{ lead.Q4 }}</span>                
                 </div>
                 <div class="flex border-t mb-1 border-gray-300 py-2">
                     <span class="text-blue-800 ">Notes</span>
                     <span class="ml-auto text-gray-900">{{ lead.notes }}</span> 
+                    </div>
                 <div class="flex border-t mb-1 border-gray-300 py-2">
                     <span class="text-blue-800 ">Tag</span>
                     {% for tag in lead.tags.all %}
